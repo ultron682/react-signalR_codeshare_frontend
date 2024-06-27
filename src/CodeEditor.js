@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import * as signalR from '@microsoft/signalr';
 import queryString from 'query-string';
 
+import { Controlled as CodeMirror } from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/material.css";
+
 const CodeEditor = () => {
     const [code, setCode] = useState('');
     const [connection, setConnection] = useState(null);
     const [uniqueId, setUniqueId] = useState('');
+
 
     useEffect(() => {
         const values = queryString.parse(window.location.search);
@@ -74,7 +79,22 @@ const CodeEditor = () => {
     };
 
     return (
-        <textarea value={code} onChange={handleCodeChange} rows="20" cols="80" />
+        // <textarea value={code} onChange={handleCodeChange} rows="20" cols="80" />
+        <CodeMirror
+        value={code}
+        options={{
+          mode: "javascript",
+          theme: "material",
+          lineNumbers: true,
+        }}
+        onBeforeChange={(editor, data, value) => {
+          setCode(value);
+        }}
+        onChange={(editor, data, value) => {
+            setCode(value);
+            sendCode(value);
+        }}
+      />
     );
 };
 
