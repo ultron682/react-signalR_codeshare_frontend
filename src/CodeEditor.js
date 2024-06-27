@@ -51,7 +51,7 @@ const CodeEditor = () => {
     }, [connection, uniqueId]);
 
     const sendCode = async (code) => {
-        if (connection.connectionStarted) {
+        if (connection.state === signalR.HubConnectionState.Connected) {
             try {
                 await connection.send('SendCode', uniqueId, code);
             } catch (e) {
@@ -68,7 +68,9 @@ const CodeEditor = () => {
     };
 
     const generateUniqueId = () => {
-        return '_' + Math.random().toString(36).substr(2, 9);
+        return 'xxxxx'.replace(/x/g, () => {
+            return Math.floor(Math.random() * 16).toString(16);
+        });
     };
 
     return (
