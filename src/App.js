@@ -4,7 +4,7 @@ import CodeEditor from "./CodeEditor";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-//import "codemirror/mode/javascript/javascript.js";
+import './i18n.js'
 
 function App() {
   return (

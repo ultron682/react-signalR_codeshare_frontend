@@ -7,14 +7,19 @@ import "codemirror/theme/material.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
+import { useTranslation } from "react-i18next";
 
 const CodeEditor = () => {
+  const { t, i18n: {changeLanguage, language}  } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState(language)
+
   const [code, setCode] = useState("");
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [theme, setTheme] = useState("material");
-  const [language, setLanguage] = useState("javascript");
+  const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
+
 
   useEffect(() => {
     const values = queryString.parse(window.location.search);
@@ -43,10 +48,10 @@ const CodeEditor = () => {
         .then((result) => {
           console.log("Connected!");
           setIsConnected(true);
-
+          setCode("Loading...");
           if (uniqueId) {
             connection.invoke("GetCode", uniqueId).then((code) => {
-              setCode("Loading...");
+              
               setCode(code);
             });
 
@@ -63,10 +68,12 @@ const CodeEditor = () => {
         });
 
       connection.onclose(() => {
+        console.log("Connection closed.");
         setIsConnected(false);
       });
 
       connection.onreconnecting(() => {
+        console.log("Connection lost, reconnecting.");
         setIsConnected(false);
       });
     }
@@ -102,12 +109,18 @@ const CodeEditor = () => {
 
   const handleLanguageChange = (event) => {
     const selectedLanguage = event.target.value;
-    setLanguage(selectedLanguage);
+    setLanguageProg(selectedLanguage);
   };
 
   const refreshPage = () => {
     window.location.reload();
   };
+
+  const handleChangeLanguage = () => {
+    const newLanguage = currentLanguage === "en" ? "pl" : "en";
+    setCurrentLanguage(newLanguage);
+    changeLanguage(newLanguage);
+  }
 
   return (
     <>
@@ -123,13 +136,19 @@ const CodeEditor = () => {
         <select
           id="languageSelect"
           onChange={handleLanguageChange}
-          value={language}
+          value={languageProg}
         >
           <option value="javascript">JavaScript</option>
           <option value="xml">XML</option>
           <option value="css">CSS</option>
           {/* Add more language options here */}
         </select>
+        <button 
+        type="button" 
+        onClick={handleChangeLanguage}
+     >
+      Change Language
+     </button>
       </div>
 
       {!isConnected && (
@@ -146,7 +165,7 @@ const CodeEditor = () => {
             alignItems: "center",
           }}
         >
-          <span>No connection to the server.</span>
+          <span>{t('noConnection')}</span>
           <button
             onClick={refreshPage}
             style={{
@@ -158,7 +177,7 @@ const CodeEditor = () => {
               borderRadius: "4px",
             }}
           >
-            Refresh
+            {t('refresh')}
           </button>
         </div>
       )}
@@ -166,7 +185,7 @@ const CodeEditor = () => {
       <CodeMirror
         value={code}
         options={{
-          mode: language,
+          mode: languageProg,
           theme: theme,
           lineNumbers: true,
         }}
