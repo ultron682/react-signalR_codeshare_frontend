@@ -20,7 +20,13 @@ const CodeEditor = () => {
                 .then(result => {
                     console.log('Connected!');
 
+                    // connection.on('', code => {
+                    //     console.log('Received previous code: ', code);
+                    //     setCode(code);
+                    // });
+
                     connection.on('ReceiveCode', code => {
+                        console.log('Received code: ', code);
                         setCode(code);
                     });
                 })
@@ -29,9 +35,10 @@ const CodeEditor = () => {
     }, [connection]);
 
     const sendCode = async (code) => {
-        if (connection.connectionStarted) {
+        if (connection.state === signalR.HubConnectionState.Connected) {
             try {
                 await connection.send('SendCode', code);
+                //alert('sent');
             } catch (e) {
                 console.log(e);
             }
