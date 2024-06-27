@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import * as signalR from '@microsoft/signalr';
+import queryString from 'query-string';
 
 const CodeEditor = () => {
     const [code, setCode] = useState('');
     const [connection, setConnection] = useState(null);
+    const [uniqueId, setUniqueId] = useState('');
 
     useEffect(() => {
+        const values = queryString.parse(window.location.search);
+        if (values.id) {
+            setUniqueId(values.id);
+        } else {
+            const generatedId = generateUniqueId();
+            setUniqueId(generatedId);
+            window.history.replaceState(null, null, `?id=${generatedId}`);
+        }
+
         const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl('http://localhost:5555/codesharehub')
+            .withUrl('http://localhost:5555/codesharehub', {
+                withCredentials: true
+            })
             .withAutomaticReconnect()
             .build();
 
@@ -20,25 +33,27 @@ const CodeEditor = () => {
                 .then(result => {
                     console.log('Connected!');
 
-                    // connection.on('', code => {
-                    //     console.log('Received previous code: ', code);
-                    //     setCode(code);
-                    // });
+                    if (uniqueId) {
+                        connection.invoke('GetCode', uniqueId)
+                            .then(initialCode => {
+                                setCode(initialCode);
+                            });
 
-                    connection.on('ReceiveCode', code => {
-                        console.log('Received code: ', code);
-                        setCode(code);
-                    });
+                        connection.on('ReceiveCode', (receivedId, code) => {
+                            if (receivedId === uniqueId) {
+                                setCode(code);
+                            }
+                        });
+                    }
                 })
                 .catch(e => console.log('Connection failed: ', e));
         }
-    }, [connection]);
+    }, [connection, uniqueId]);
 
     const sendCode = async (code) => {
-        if (connection.state === signalR.HubConnectionState.Connected) {
+        if (connection.connectionStarted) {
             try {
-                await connection.send('SendCode', code);
-                //alert('sent');
+                await connection.send('SendCode', uniqueId, code);
             } catch (e) {
                 console.log(e);
             }
@@ -50,6 +65,10 @@ const CodeEditor = () => {
     const handleCodeChange = (event) => {
         setCode(event.target.value);
         sendCode(event.target.value);
+    };
+
+    const generateUniqueId = () => {
+        return '_' + Math.random().toString(36).substr(2, 9);
     };
 
     return (
