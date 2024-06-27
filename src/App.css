@@ -1,6 +1,6 @@
 
 
-CodeEditor {
-  height: 100%;
-  font-size: 1.2em;
+.CodeEditor {
+  height: 100vh;
+  
 }

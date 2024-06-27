@@ -11,7 +11,7 @@ function App() {
     <div className="App">
       <Header />
 
-      <CodeEditor />
+      <CodeEditor class="CodeEditor" />
 
       <Footer />
     </div>
