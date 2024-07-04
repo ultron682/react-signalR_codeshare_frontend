@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import CodeEditor from "./CodeEditor";
+import CodeEditor from "./components/CodeEditor.jsx";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Routes, Route, Outlet } from "react-router-dom";

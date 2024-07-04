@@ -2,6 +2,8 @@
   "translation": {
     "headerTitle": "CodeShare",
     "refresh": "Odśwież",
-     "noConnection": "Brak połączenia z serwerem."
+    "noConnection": "Brak połączenia z serwerem.",
+    "theme": "Motyw:",
+    "lang": "Język:"
   }
 }

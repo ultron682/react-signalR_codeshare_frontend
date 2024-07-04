@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import * as signalR from "@microsoft/signalr";
-import queryString from "query-string";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
@@ -48,7 +47,7 @@ const CodeEditor = () => {
     // }
 
     const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://192.168.10.17:5555/codesharehub", {
+      .withUrl("http://localhost:5555/codesharehub", {
         withCredentials: false,
       })
       .withAutomaticReconnect()
@@ -137,7 +136,7 @@ const CodeEditor = () => {
   return (
     <>
       <div style={{ marginBottom: 10 }}>
-        <label htmlFor="themeSelect">Theme:</label>
+        <label htmlFor="themeSelect">{t('theme')}</label>
         <select id="themeSelect" onChange={handleThemeChange} value={theme}>
           <option value="material">Material</option>
           <option value="default">Default</option>
