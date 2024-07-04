@@ -20,7 +20,7 @@ const LandingPage = () => {
 
   return (
     <div className="landing-container">
-      <h1>Welcome to Our App</h1>
+      <h1>Welcome to Code Base</h1>
       <p>Your journey to awesome experiences starts here.</p>
       <button onClick={GenerateNewCodeHub} >Generate New CodeHub</button>
 

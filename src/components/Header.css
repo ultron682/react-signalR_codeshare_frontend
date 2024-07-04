@@ -1,7 +1,11 @@
-header > h1 {
+h1 {
     text-align: center;
+    color: #61dafb;
 }
 
+a {
+    text-decoration: none;
+}
 .App-logo {
     height: 40px;
     pointer-events: none;
