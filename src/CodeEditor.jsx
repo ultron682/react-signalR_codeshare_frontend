@@ -8,6 +8,9 @@ import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
 import { useTranslation } from "react-i18next";
+import { useParams, useNavigate } from 'react-router-dom';
+
+
 
 const CodeEditor = () => {
   const { t, i18n: {changeLanguage, language}  } = useTranslation();
@@ -20,16 +23,29 @@ const CodeEditor = () => {
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
 
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    console.log(id);
+    if (id) {
+      setUniqueId(id);
+    }
+    else {
+      
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
-    const values = queryString.parse(window.location.search);
-    if (values.id) {
-      setUniqueId(values.id);
-    } else {
-      const generatedId = generateUniqueId();
-      setUniqueId(generatedId);
-      window.history.replaceState(null, null, `?id=${generatedId}`);
-    }
+    // const values = queryString.parse(window.location);
+    // console.log(values);
+    // if (values[0]) {
+    //   setUniqueId(values[0]);
+    // } else {
+    //   const generatedId = generateUniqueId();
+    //   setUniqueId(generatedId);
+    //   window.history.replaceState(null, null, `${generatedId}`);
+    // }
 
     const newConnection = new signalR.HubConnectionBuilder()
       .withUrl("http://192.168.10.17:5555/codesharehub", {
@@ -96,11 +112,7 @@ const CodeEditor = () => {
     sendCode(value);
   };
 
-  const generateUniqueId = () => {
-    return "xxxxx".replace(/x/g, () => {
-      return Math.floor(Math.random() * 16).toString(16);
-    });
-  };
+
 
   const handleThemeChange = (event) => {
     const selectedTheme = event.target.value;

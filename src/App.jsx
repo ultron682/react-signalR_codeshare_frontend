@@ -8,6 +8,7 @@ import "./App.css";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import "./i18n.js";
+import LandingPage from "./components/LandingPage.jsx";
 
 function App() {
   return (
@@ -17,7 +18,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/" element={<CodeEditor class="CodeEditor" />} />
+          <Route path="/:id" element={<CodeEditor class="CodeEditor" />} />
+          <Route path="/" element={<LandingPage />} />
+          {/* <Route path="/" element={<CodeEditor class="CodeEditor" />} /> */}
         </Routes>
       </BrowserRouter>
       <Footer />
