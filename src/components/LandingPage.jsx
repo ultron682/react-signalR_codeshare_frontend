@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
-import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const [uniqueId, setUniqueId] = useState("");

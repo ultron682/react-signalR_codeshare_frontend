@@ -3,7 +3,7 @@ import "./App.css";
 import CodeEditor from "./components/CodeEditor.jsx";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
