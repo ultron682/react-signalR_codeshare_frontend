@@ -1,3 +1,8 @@
+:root {
+  --background-light: #546e7a;
+  --background-dark: #1c1c1c;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +15,12 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+body[data-theme='light'] {
+  background-color: var(--background-light);
+}
+
+body[data-theme='dark'] {
+  background-color: var(--background-dark);
 }

@@ -7,13 +7,15 @@ import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from 'react-router-dom';
-
-
+import { useParams, useNavigate } from "react-router-dom";
+import "./CodeEditor.css";
 
 const CodeEditor = () => {
-  const { t, i18n: {changeLanguage, language}  } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(language)
+  const {
+    t,
+    i18n: { changeLanguage, language },
+  } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState(language);
 
   const [code, setCode] = useState("");
   const [connection, setConnection] = useState(null);
@@ -21,7 +23,8 @@ const CodeEditor = () => {
   const [theme, setTheme] = useState("material");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
-
+  const [editable, setEditable] = useState(false);
+  
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -29,23 +32,11 @@ const CodeEditor = () => {
     console.log(id);
     if (id) {
       setUniqueId(id);
-    }
-    else {
-      
+    } else {
     }
   }, [id, navigate]);
 
   useEffect(() => {
-    // const values = queryString.parse(window.location);
-    // console.log(values);
-    // if (values[0]) {
-    //   setUniqueId(values[0]);
-    // } else {
-    //   const generatedId = generateUniqueId();
-    //   setUniqueId(generatedId);
-    //   window.history.replaceState(null, null, `${generatedId}`);
-    // }
-
     const newConnection = new signalR.HubConnectionBuilder()
       .withUrl("http://localhost:5555/codesharehub", {
         withCredentials: false,
@@ -64,9 +55,10 @@ const CodeEditor = () => {
           console.log("Connected!");
           setIsConnected(true);
           setCode("Loading...");
+          setEditable(true);
+
           if (uniqueId) {
             connection.invoke("GetCode", uniqueId).then((code) => {
-              
               setCode(code);
             });
 
@@ -111,8 +103,6 @@ const CodeEditor = () => {
     sendCode(value);
   };
 
-
-
   const handleThemeChange = (event) => {
     const selectedTheme = event.target.value;
     setTheme(selectedTheme);
@@ -131,19 +121,18 @@ const CodeEditor = () => {
     const newLanguage = currentLanguage === "en" ? "pl" : "en";
     setCurrentLanguage(newLanguage);
     changeLanguage(newLanguage);
-  }
+  };
 
   return (
     <>
       <div style={{ marginBottom: 10 }}>
-        <label htmlFor="themeSelect">{t('theme')}</label>
+        <label htmlFor="themeSelect">{t("theme")}</label>
         <select id="themeSelect" onChange={handleThemeChange} value={theme}>
           <option value="material">Material</option>
           <option value="default">Default</option>
-          {/* Add more theme options here */}
         </select>
 
-        <label htmlFor="languageSelect">Language:</label>
+        <label htmlFor="languageSelect">{t("lang")}</label>
         <select
           id="languageSelect"
           onChange={handleLanguageChange}
@@ -152,14 +141,10 @@ const CodeEditor = () => {
           <option value="javascript">JavaScript</option>
           <option value="xml">XML</option>
           <option value="css">CSS</option>
-          {/* Add more language options here */}
         </select>
-        <button 
-        type="button" 
-        onClick={handleChangeLanguage}
-     >
-      Change Language
-     </button>
+        <button type="button" onClick={handleChangeLanguage}>
+          Change Language
+        </button>
       </div>
 
       {!isConnected && (
@@ -176,7 +161,7 @@ const CodeEditor = () => {
             alignItems: "center",
           }}
         >
-          <span>{t('noConnection')}</span>
+          <span>{t("noConnection")}</span>
           <button
             onClick={refreshPage}
             style={{
@@ -188,7 +173,7 @@ const CodeEditor = () => {
               borderRadius: "4px",
             }}
           >
-            {t('refresh')}
+            {t("refresh")}
           </button>
         </div>
       )}
@@ -199,8 +184,12 @@ const CodeEditor = () => {
           mode: languageProg,
           theme: theme,
           lineNumbers: true,
+          
         }}
         onBeforeChange={handleCodeChange}
+        editable={false}
+        minHeight="100vh"
+        height="100vh"
       />
     </>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./App.css";
 import CodeEditor from "./components/CodeEditor.jsx";
 import Header from "./components/Header";
@@ -9,8 +9,15 @@ import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import "./i18n.js";
 import LandingPage from "./components/LandingPage.jsx";
+import { useTheme } from './components/ThemeContext';
 
 function App() {
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return (
     <div className="app-container">
       <Header />
