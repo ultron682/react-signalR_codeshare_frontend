@@ -190,9 +190,9 @@ const CodeEditor = () => {
           mode: languageProg,
           theme: themeCode,
           lineNumbers: true,
+          readOnly: !editable ? "nocursor" : false,
         }}
         onBeforeChange={handleCodeChange}
-        // editable={false}
         minHeight="100vh"
         height="100vh"
       />
