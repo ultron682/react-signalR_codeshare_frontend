@@ -1,3 +1,11 @@
 .CodeMirror {
     min-height: 90vh!important;
 }
+
+.toolsBar-light{
+    background-color: #6a8a98;
+}
+
+.toolsBar-dark{
+    background-color: #25373f;
+}

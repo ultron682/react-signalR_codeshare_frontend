@@ -22,7 +22,9 @@ function Header() {
   return (
     <header className={theme === 'light' ? 'light-theme' : 'dark-theme'}>
       
-      <button onClick={toggleTheme}>{theme === 'light' ? <MdLightMode size={30} /> : <MdDarkMode size={30} />}</button>
+      <button onClick={toggleTheme}>
+        {theme === 'light' ? <MdLightMode size={30} /> : <MdDarkMode size={30} />}
+        </button>
       <Link to="/">
         <h1>CodeShare</h1>
       </Link>

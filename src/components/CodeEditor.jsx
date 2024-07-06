@@ -8,6 +8,7 @@ import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTheme } from './ThemeContext';
 import "./CodeEditor.css";
 
 const CodeEditor = () => {
@@ -20,13 +21,15 @@ const CodeEditor = () => {
   const [code, setCode] = useState("");
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
-  const [theme, setTheme] = useState("material");
+  const [themeCode, setThemeCode] = useState("material");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
   const [editable, setEditable] = useState(false);
-  
+
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { theme } = useTheme();
 
   React.useEffect(() => {
     console.log(id);
@@ -105,7 +108,7 @@ const CodeEditor = () => {
 
   const handleThemeChange = (event) => {
     const selectedTheme = event.target.value;
-    setTheme(selectedTheme);
+    setThemeCode(selectedTheme);
   };
 
   const handleLanguageChange = (event) => {
@@ -125,9 +128,12 @@ const CodeEditor = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 10 }}>
+      <div
+        className={theme === "light" ? "toolsBar-light" : "toolsBar-dark"}
+        style={{ marginBottom: 10 }}
+      >
         <label htmlFor="themeSelect">{t("theme")}</label>
-        <select id="themeSelect" onChange={handleThemeChange} value={theme}>
+        <select id="themeSelect" onChange={handleThemeChange} value={themeCode}>
           <option value="material">Material</option>
           <option value="default">Default</option>
         </select>
@@ -182,12 +188,11 @@ const CodeEditor = () => {
         value={code}
         options={{
           mode: languageProg,
-          theme: theme,
+          theme: themeCode,
           lineNumbers: true,
-          
         }}
         onBeforeChange={handleCodeChange}
-        editable={false}
+        // editable={false}
         minHeight="100vh"
         height="100vh"
       />
