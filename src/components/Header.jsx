@@ -5,17 +5,14 @@ import { VscAccount } from "react-icons/vsc";
 import { useTheme } from './ThemeContext';
 import { MdLightMode, MdDarkMode  } from "react-icons/md";
 
-function Header() {
+function Header({user}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
   const { toggleTheme, theme } = useTheme();
 
   useEffect(() => {
-    // Przykładowa logika
-    const user = localStorage.getItem("user");
-    if (user) {
+
+    if (user.email) {
       setIsLoggedIn(true);
-      setUsername(user); // Zakładając, że 'user' to nazwa użytkownika
     }
   }, []);
 
@@ -29,7 +26,7 @@ function Header() {
         <h1>CodeShare</h1>
       </Link>
       {isLoggedIn ? (
-        <div>{username}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
+        <div>{user.email}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
         <Link to="/login">
           <VscAccount size={30} />
