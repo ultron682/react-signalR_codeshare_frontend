@@ -1,14 +1,32 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Form.css';
 
-const RegisterForm = ({ toggleForm }) => {
+const RegisterForm = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Logika rejestracji
+        try {
+            const response = await axios.post('http://localhost:5555/register', {
+                username,
+                email,
+                password
+            });
+            // Obsługa pomyślnej rejestracji
+            console.log('Registration successful:', response.data);
+            setSuccess('Registration successful. You can now log in.');
+            setError('');
+        } catch (error) {
+            // Obsługa błędu rejestracji
+            console.error('Error registering:', error);
+            setError('Registration failed. Please try again.');
+            setSuccess('');
+        }
     };
 
     return (
@@ -39,9 +57,11 @@ const RegisterForm = ({ toggleForm }) => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
+                {error && <p className="error-text">{error}</p>}
+                {success && <p className="success-text">{success}</p>}
                 <button type="submit" className="submit-btn">Register</button>
             </form>
-            <p className="toggle-text">Already have an account? <span onClick={toggleForm}>Login here</span></p>
+            {/* <p className="toggle-text">Already have an account? <span onClick={toggleForm}>Login here</span></p> */}
         </div>
     );
 };

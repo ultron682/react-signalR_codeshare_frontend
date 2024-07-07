@@ -19,8 +19,10 @@ code {
 
 body[data-theme='light'] {
   background-color: var(--background-light);
+  color: #546e7a;
 }
 
 body[data-theme='dark'] {
   background-color: var(--background-dark);
+  color: aliceblue;
 }

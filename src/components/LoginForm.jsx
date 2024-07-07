@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Form.css';
 
-const LoginForm = ({ toggleForm }) => {
+import { useNavigate } from 'react-router-dom';
+
+const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Logika logowania
+        try {
+            const response = await axios.post('http://localhost:5555/login', {
+                email,
+                password
+            });
+            // Obsługa pomyślnego logowania
+            localStorage.setItem('accessToken', response.data.accessToken);
+            console.log('Login successful:', response.data.accessToken);
+            navigate('/account');
+        } catch (error) {
+            // Obsługa błędu logowania
+            console.error('Error logging in:', error);
+            setError('Invalid email or password');
+        }
     };
 
     return (
@@ -30,9 +48,10 @@ const LoginForm = ({ toggleForm }) => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
+                {error && <p className="error-text">{error}</p>}
                 <button type="submit" className="submit-btn">Login</button>
             </form>
-            <p className="toggle-text">Don't have an account? <span onClick={toggleForm}>Register here</span></p>
+            {/* <p className="toggle-text">Don't have an account? <span>Register here</span></p> */}
         </div>
     );
 };

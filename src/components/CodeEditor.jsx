@@ -24,7 +24,6 @@ const CodeEditor = () => {
   const [themeCode, setThemeCode] = useState("material");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
-  const [editable, setEditable] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -58,7 +57,6 @@ const CodeEditor = () => {
           console.log("Connected!");
           setIsConnected(true);
           setCode("Loading...");
-          setEditable(true);
 
           if (uniqueId) {
             connection.invoke("GetCode", uniqueId).then((code) => {
@@ -190,7 +188,7 @@ const CodeEditor = () => {
           mode: languageProg,
           theme: themeCode,
           lineNumbers: true,
-          readOnly: !editable ? "nocursor" : false,
+          readOnly: !isConnected ? "nocursor" : false,
         }}
         onBeforeChange={handleCodeChange}
         minHeight="100vh"
