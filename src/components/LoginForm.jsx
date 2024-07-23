@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import './Form.css';
-
+import { AuthContext } from './AuthContext'; 
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
@@ -9,6 +9,9 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,7 +21,7 @@ const LoginForm = () => {
                 password
             });
             // Obsługa pomyślnego logowania
-            localStorage.setItem('accessToken', response.data.accessToken);
+            login(response.data.accessToken);
             console.log('Login successful:', response.data.accessToken);
             navigate('/account');
         } catch (error) {

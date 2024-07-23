@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { VscAccount } from "react-icons/vsc";
 import { useTheme } from './ThemeContext';
 import { MdLightMode, MdDarkMode  } from "react-icons/md";
+import { AuthContext } from './AuthContext'; 
 
-function Header({user}) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function Header() {
   const { toggleTheme, theme } = useTheme();
+  const { isLoggedIn, getAccountInfo } = useContext(AuthContext);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (user.email) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  //   if (user.email) {
+  //     setIsLoggedIn(true);
+  //   }
+  // }, []);
 
   return (
     <header className={theme === 'light' ? 'light-theme' : 'dark-theme'}>
@@ -26,7 +27,7 @@ function Header({user}) {
         <h1>CodeShare</h1>
       </Link>
       {isLoggedIn ? (
-        <div>{user.email}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
+        <div>{getAccountInfo().email}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
         <Link to="/login">
           <VscAccount size={30} />
