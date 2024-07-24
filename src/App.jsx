@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import CodeEditor from "./components/CodeEditor/CodeEditor.jsx";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import CodeEditor from "./components/CodeEditor/CodeEditor";
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import Account from "./components/Account";
-import LandingPage from "./components/LandingPage.jsx";
+import LandingPage from "./components/LandingPage";
 
 import { useTheme } from "./components/ThemeContext";
 import "./i18n.js";
@@ -25,8 +25,8 @@ function App() {
       <Header />
 
       <Routes>
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/account/login" element={<LoginForm />} />
+        <Route path="/account/register" element={<RegisterForm />} />
         <Route path="/account" element={<Account />} />
         <Route path="/:id" element={<CodeEditor class="CodeEditor" />} />
         <Route path="/" element={<LandingPage />} />

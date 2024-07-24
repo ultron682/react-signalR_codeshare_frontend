@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { VscAccount } from "react-icons/vsc";
-import { useTheme } from "./ThemeContext";
+import { useTheme } from "../ThemeContext";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../AuthContext";
 
 function Header() {
   const { toggleTheme, theme } = useTheme();
@@ -34,7 +34,7 @@ function Header() {
           <VscAccount size={30} /> <div>{user.userName}</div> 
         </Link> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
-        <Link to="/login">
+        <Link to="/account/login">
           <VscAccount size={30} />
         </Link> // Przycisk do logowania/rejestracji, gdy użytkownik nie jest zalogowany
       )}

@@ -24,10 +24,10 @@ const LandingPage = () => {
       </Link>
 
       <div className="button-group">
-        <Link to="/login" className="landing-button">
+        <Link to="/account/login" className="landing-button">
           Login
         </Link>
-        <Link to="/register" className="landing-button">
+        <Link to="/account/register" className="landing-button">
           Register
         </Link>
       </div>
