@@ -1,18 +1,32 @@
-import React, { createContext, useState } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useStateCallback,
+} from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState({email: '', isEmailConfirmed: true});
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    if (localStorage.getItem("token") != null) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchAccountInfo();
+    }
+  }, [token]);
 
   const login = (newToken) => {
     setToken(newToken);
     localStorage.setItem("token", newToken);
-
-    fetchAccountInfo();
   };
 
   const logout = () => {
@@ -26,38 +40,25 @@ const AuthProvider = ({ children }) => {
 
   const fetchAccountInfo = async () => {
     try {
-      const response = await axios.get("http://localhost:5555/manage/info", {
+      const response = await axios.get("http://localhost:5555/account", {
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          ownerId: "d6ccb40e-d9e7-4b9d-8d9c-a68d32b00586",
         },
       });
       console.log(response.data);
       setUser(response.data);
-      return response.data;
-
     } catch (error) {
       console.error("Błąd podczas pobierania informacji o koncie:", error);
     }
   };
 
-  const getAccountInfo = async () => {
-    try {
-      const response = await axios.get("http://localhost:5555/snippet", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response.data);
-      setUser(response.data);
-      return response.data;
-
-    } catch (error) {
-      console.error("Błąd podczas pobierania informacji o koncie:", error);
-    }
-  }
-
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isLoggedIn, getAccountInfo }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, isLoggedIn }}
+    >
       {children}
     </AuthContext.Provider>
   );

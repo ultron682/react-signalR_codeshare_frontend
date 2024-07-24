@@ -26,13 +26,13 @@ function Header() {
       <Link to="/">
         <h1>CodeShare</h1>
       </Link>
-      {isLoggedIn ? (
+      {/* {isLoggedIn ? (
         <div>{getAccountInfo().email}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
         <Link to="/login">
           <VscAccount size={30} />
         </Link> // Przycisk do logowania/rejestracji, gdy użytkownik nie jest zalogowany
-      )}
+      )} */}
     </header>
   );
 }
