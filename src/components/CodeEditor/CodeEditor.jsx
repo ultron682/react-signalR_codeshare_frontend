@@ -22,7 +22,6 @@ const CodeEditor = () => {
   const [code, setCode] = useState("");
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
-  const [themeCode, setThemeCode] = useState("material");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
   const { user } = useContext(AuthContext);
@@ -106,11 +105,6 @@ const CodeEditor = () => {
     sendCode(value);
   };
 
-  const handleThemeChange = (event) => {
-    const selectedTheme = event.target.value;
-    setThemeCode(selectedTheme);
-  };
-
   const handleLanguageChange = (event) => {
     const selectedLanguage = event.target.value;
     setLanguageProg(selectedLanguage);
@@ -132,11 +126,6 @@ const CodeEditor = () => {
         className={theme === "light" ? "toolsBar-light" : "toolsBar-dark"}
         style={{ marginBottom: 10 }}
       >
-        <label htmlFor="themeSelect">{t("theme")}</label>
-        <select id="themeSelect" onChange={handleThemeChange} value={themeCode}>
-          <option value="material">Material</option>
-          <option value="default">Default</option>
-        </select>
 
         <label htmlFor="languageSelect">{t("lang")}</label>
         <select
@@ -188,7 +177,6 @@ const CodeEditor = () => {
         value={code}
         options={{
           mode: languageProg,
-          theme: themeCode,
           lineNumbers: true,
           readOnly: !isConnected ? "nocursor" : false,
         }}

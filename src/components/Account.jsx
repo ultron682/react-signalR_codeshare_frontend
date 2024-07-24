@@ -9,6 +9,7 @@ const Account = () => {
   const location = useLocation();
 
   useEffect(() => {
+    if(user !== null)
     fetchAccountInfo(); // refresh
   }, [location]);
 
@@ -37,9 +38,10 @@ const Account = () => {
           {user && (
             <ul>
               {user.codeSnippets.map((item) => (
-                <li key={item}>
-                  <Link to={"/" + item}>{item}</Link>
-                  <button onClick={() => handleDelete(item)}>Usuń</button>
+                <li key={item.$id}>
+                  <Link to={"/" + item.uniqueId}>{item.uniqueId}</Link>
+                  <p>{item.code}</p>
+                  <button onClick={() => handleDelete(item.uniqueId)}>Usuń</button>
                 </li>
               ))}
             </ul>
