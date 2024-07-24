@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { VscAccount } from "react-icons/vsc";
@@ -30,7 +30,9 @@ function Header() {
         <h1>CodeShare</h1>
       </Link>
       {user ? (
-        <div>{user.email}</div> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
+        <Link to="/account">
+          <VscAccount size={30} /> <div>{user.userName}</div> 
+        </Link> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
         <Link to="/login">
           <VscAccount size={30} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -8,8 +8,9 @@ import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../ThemeContext';
 import "./CodeEditor.css";
+import { AuthContext } from "../AuthContext";
 
 const CodeEditor = () => {
   const {
@@ -24,6 +25,7 @@ const CodeEditor = () => {
   const [themeCode, setThemeCode] = useState("material");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
+  const { user } = useContext(AuthContext);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -90,7 +92,7 @@ const CodeEditor = () => {
   const sendCode = async (code) => {
     if (connection.state === signalR.HubConnectionState.Connected) {
       try {
-        await connection.send("SendCode", uniqueId, code);
+        await connection.send("SendCode", uniqueId, code, user.id);
       } catch (e) {
         console.log(e);
       }

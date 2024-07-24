@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import CodeEditor from "./components/CodeEditor.jsx";
+import CodeEditor from "./components/CodeEditor/CodeEditor.jsx";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LoginForm from "./components/LoginForm";
