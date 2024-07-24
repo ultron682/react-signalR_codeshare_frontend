@@ -49,10 +49,12 @@ const CodeEditor = () => {
 
     // Ustaw nowy timer, który wywoła performDelayedAction po 1 sekundzie
     const newTimer = setTimeout(() => {
-      if (Date.now() - lastActionTime >= 1000) {
+      if (Date.now() - lastActionTime >= 500) {
         performDelayedAction();
+
+        
       }
-    }, 1000);
+    }, 500);
 
     setTimer(newTimer);
 
