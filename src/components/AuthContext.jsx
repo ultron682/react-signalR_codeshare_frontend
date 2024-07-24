@@ -27,6 +27,19 @@ const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
+  const deleteSnippet = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5555/account/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchAccountInfo();
+    } catch (error) {
+      console.error("Błąd podczas usuwania kodu:", error);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchAccountInfo();
@@ -48,7 +61,9 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isLoggedIn }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, isLoggedIn, deleteSnippet, fetchAccountInfo }}
+    >
       {children}
     </AuthContext.Provider>
   );
