@@ -8,7 +8,7 @@ import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTheme } from '../ThemeContext';
+import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
 
@@ -17,7 +17,6 @@ const CodeEditor = () => {
     t,
     i18n: { changeLanguage, language },
   } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(language);
 
   const [code, setCode] = useState("");
   const [connection, setConnection] = useState(null);
@@ -31,7 +30,43 @@ const CodeEditor = () => {
 
   const { theme } = useTheme();
 
-  React.useEffect(() => {
+  const [lastActionTime, setLastActionTime] = useState(null);
+  const [timer, setTimer] = useState(null);
+
+  const handleAction = () => {
+    // Aktualizuj czas ostatniego wywołania
+    setLastActionTime(Date.now());
+
+    // Wywołaj jakąś akcję
+    console.log("Action executed");
+  };
+
+  useEffect(() => {
+    // Czyść poprzedni timer, jeśli istnieje
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    // Ustaw nowy timer, który wywoła performDelayedAction po 1 sekundzie
+    const newTimer = setTimeout(() => {
+      if (Date.now() - lastActionTime >= 1000) {
+        performDelayedAction();
+      }
+    }, 1000);
+
+    setTimer(newTimer);
+
+    // Czyść timer przy unmount lub przy zmianie lastActionTime
+    return () => clearTimeout(newTimer);
+  }, [lastActionTime]);
+
+  const performDelayedAction = () => {
+    // Funkcja, która ma zostać wykonana po 1 sekundzie od ostatniego wywołania handleAction
+    console.log("Delayed action executed");
+    sendCode(code);
+  };
+
+  useEffect(() => {
     console.log(id);
     if (id) {
       setUniqueId(id);
@@ -89,9 +124,18 @@ const CodeEditor = () => {
   }, [connection, uniqueId]);
 
   const sendCode = async (code) => {
+    if (connection === null) {
+      return;
+    }
+
     if (connection.state === signalR.HubConnectionState.Connected) {
       try {
-        await connection.send("SendCode", uniqueId, code, user.id);
+        await connection.send(
+          "SendCode",
+          uniqueId,
+          code,
+          user !== null ? user.id : ""
+        );
       } catch (e) {
         console.log(e);
       }
@@ -102,7 +146,8 @@ const CodeEditor = () => {
 
   const handleCodeChange = (editor, data, value) => {
     setCode(value);
-    sendCode(value);
+    // sendCode(value);
+    handleAction();
   };
 
   const handleLanguageChange = (event) => {
@@ -114,19 +159,12 @@ const CodeEditor = () => {
     window.location.reload();
   };
 
-  const handleChangeLanguage = () => {
-    const newLanguage = currentLanguage === "en" ? "pl" : "en";
-    setCurrentLanguage(newLanguage);
-    changeLanguage(newLanguage);
-  };
-
   return (
     <>
       <div
         className={theme === "light" ? "toolsBar-light" : "toolsBar-dark"}
         style={{ marginBottom: 10 }}
       >
-
         <label htmlFor="languageSelect">{t("lang")}</label>
         <select
           id="languageSelect"
@@ -137,9 +175,6 @@ const CodeEditor = () => {
           <option value="xml">XML</option>
           <option value="css">CSS</option>
         </select>
-        <button type="button" onClick={handleChangeLanguage}>
-          Change Language
-        </button>
       </div>
 
       {!isConnected && (
@@ -177,6 +212,7 @@ const CodeEditor = () => {
         value={code}
         options={{
           mode: languageProg,
+          theme: "material",
           lineNumbers: true,
           readOnly: !isConnected ? "nocursor" : false,
         }}

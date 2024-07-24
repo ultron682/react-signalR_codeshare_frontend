@@ -1,14 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { VscAccount } from "react-icons/vsc";
 import { useTheme } from "../ThemeContext";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { AuthContext } from "../AuthContext";
+import { useTranslation } from "react-i18next";
 
 function Header() {
   const { toggleTheme, theme } = useTheme();
   const { user } = useContext(AuthContext);
+  const {
+    t,
+    i18n: { changeLanguage, language },
+  } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState(language);
 
   // useEffect(() => {
 
@@ -16,6 +22,12 @@ function Header() {
   //     setIsLoggedIn(true);
   //   }
   // }, []);
+
+  const handleChangeLanguage = () => {
+    const newLanguage = currentLanguage === "en" ? "pl" : "en";
+    setCurrentLanguage(newLanguage);
+    changeLanguage(newLanguage);
+  };
 
   return (
     <header className={theme === "light" ? "light-theme" : "dark-theme"}>
@@ -31,13 +43,17 @@ function Header() {
       </Link>
       {user ? (
         <Link to="/account">
-          <VscAccount size={30} /> <div>{user.userName}</div> 
+          <VscAccount size={30} /> <div>{user.userName}</div>
         </Link> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
       ) : (
         <Link to="/account/login">
           <VscAccount size={30} />
         </Link> // Przycisk do logowania/rejestracji, gdy użytkownik nie jest zalogowany
       )}
+
+      <button type="button" onClick={handleChangeLanguage}>
+        PL/EN
+      </button>
     </header>
   );
 }
