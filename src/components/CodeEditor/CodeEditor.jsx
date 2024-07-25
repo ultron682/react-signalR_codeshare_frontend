@@ -18,8 +18,9 @@ const CodeEditor = () => {
     t,
     i18n: { changeLanguage, language },
   } = useTranslation();
+  const { theme } = useTheme();
 
-  const [codeContent, setCodeContent] = useState("");
+  const [codeContent, setCodeContent] = useState({code: "", fromOtherUser: false});
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
@@ -30,7 +31,7 @@ const CodeEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { theme } = useTheme();
+
 
   const [timer, setTimer] = useState(null);
 
@@ -42,26 +43,26 @@ const CodeEditor = () => {
   }, [id, navigate]);
 
   const sendUpdatedCode = () => {
-    console.log("timer: " + codeContent);
-    sendCodeToServer(codeContent);
+    console.log("sendUpdatedCode: " + codeContent.code);
+    sendCodeToServer(codeContent.code);
     clearTimeout(timer);
     setTimer(null);
   };
 
   useEffect(() => {
-    if (!connection) return;
+    if (!connection || !isConnected || codeContent.fromOtherUser === true) return;
 
-    console.log("on codeContent change: " + codeContent);
+    console.log("on codeContent change: " + codeContent.code);
 
-    if (timer) {
-      clearTimeout(timer);
-    }
+   // if (timer) {
+   //   clearTimeout(timer);
+    //}
 
-    const newTimer = setTimeout(() => {
+    //const newTimer = setTimeout(() => {
       sendUpdatedCode();
-    }, 500);
+    //}, 1000);
 
-    setTimer(newTimer);
+   // setTimer(newTimer);
   }, [codeContent]);
 
   useEffect(() => {
@@ -76,26 +77,34 @@ const CodeEditor = () => {
   }, []);
 
   useEffect(() => {
-    if (connection && connection.state === signalR.HubConnectionState.Disconnected) {
+    if (
+      connection &&
+      connection.state === signalR.HubConnectionState.Disconnected
+    ) {
       connection
         .start()
-        .then((result) => {
+        .then(() => {
           console.log("Connected!");
 
           // setCodeContent("Loading...");
 
           if (uniqueId) {
-            connection.invoke("GetCode", uniqueId).then((code) => {
-              setCodeContent(code);
-              setIsConnected(true);
-            });
-
-            connection.on("ReceivedCode", (receivedId, code) => {
-              if (receivedId === uniqueId) {
-                setCodeContent(code);
+            connection
+              .invoke("JoinGroup", uniqueId)
+              .then((code) => {
+                console.log("JoinGroup code: " + code);
+                setCodeContent({code: code, fromOtherUser: true});
                 setIsConnected(true);
-              }
-            });
+
+                connection.on("ReceivedCode", (receivedId, code) => {
+                  //if (receivedId === uniqueId) {
+                  console.log("Received code: " + code);
+                  setCodeContent({code: code, fromOtherUser: true});
+                  setIsConnected(true);
+                  //}
+                });
+              })
+              .catch((err) => console.error(err));
           }
         })
         .catch((e) => {
@@ -122,8 +131,8 @@ const CodeEditor = () => {
 
     if (connection.state === signalR.HubConnectionState.Connected) {
       try {
-        await connection.send(
-          "SendCode",
+        await connection.invoke(
+          "BroadcastText",
           uniqueId,
           code,
           user !== null ? user.id : ""
@@ -198,15 +207,16 @@ const CodeEditor = () => {
       )}
 
       <CodeMirror
-        value={codeContent}
+        value={codeContent.code}
         options={{
           mode: languageProg,
           theme: "material",
           lineNumbers: true,
+          lineWrapping: true,
           readOnly: !isConnected ? "nocursor" : false,
         }}
         onBeforeChange={(editor, metadata, value) => {
-          setCodeContent(value);
+          setCodeContent({code: value, fromOtherUser: false});
         }}
         minHeight="100%"
         height="100%"
