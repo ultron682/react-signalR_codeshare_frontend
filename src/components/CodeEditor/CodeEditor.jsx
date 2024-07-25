@@ -18,7 +18,7 @@ const CodeEditor = () => {
     i18n: { changeLanguage, language },
   } = useTranslation();
 
-  const [code, setCode] = useState("");
+  const [codeContent, setCodeContent] = useState("");
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
@@ -33,39 +33,26 @@ const CodeEditor = () => {
   const [lastActionTime, setLastActionTime] = useState(null);
   const [timer, setTimer] = useState(null);
 
-  const handleAction = () => {
-    // Aktualizuj czas ostatniego wywołania
-    setLastActionTime(Date.now());
-
-    // Wywołaj jakąś akcję
-    console.log("Action executed");
-  };
 
   useEffect(() => {
-    // Czyść poprzedni timer, jeśli istnieje
-    if (timer) {
-      clearTimeout(timer);
+    console.log("useEffect lastActionTime");
+
+    if (timer || connection == null) {
+      return;
     }
 
-    // Ustaw nowy timer, który wywoła performDelayedAction po 1 sekundzie
     const newTimer = setTimeout(() => {
-      if (Date.now() - lastActionTime >= 500) {
-        performDelayedAction();
-
-        
-      }
+      performDelayedAction();
+      clearTimeout(timer);
+      setTimer(null);
     }, 500);
 
     setTimer(newTimer);
-
-    // Czyść timer przy unmount lub przy zmianie lastActionTime
-    return () => clearTimeout(newTimer);
   }, [lastActionTime]);
 
   const performDelayedAction = () => {
-    // Funkcja, która ma zostać wykonana po 1 sekundzie od ostatniego wywołania handleAction
     console.log("Delayed action executed");
-    sendCode(code);
+    sendCode(codeContent);
   };
 
   useEffect(() => {
@@ -94,16 +81,16 @@ const CodeEditor = () => {
         .then((result) => {
           console.log("Connected!");
           setIsConnected(true);
-          setCode("Loading...");
+          setCodeContent("Loading...");
 
           if (uniqueId) {
             connection.invoke("GetCode", uniqueId).then((code) => {
-              setCode(code);
+              setCodeContent(code);
             });
 
             connection.on("ReceiveCode", (receivedId, code) => {
               if (receivedId === uniqueId) {
-                setCode(code);
+                setCodeContent(code);
               }
             });
           }
@@ -146,15 +133,8 @@ const CodeEditor = () => {
     }
   };
 
-  const handleCodeChange = (editor, data, value) => {
-    setCode(value);
-    // sendCode(value);
-    handleAction();
-  };
-
-  const handleLanguageChange = (event) => {
-    const selectedLanguage = event.target.value;
-    setLanguageProg(selectedLanguage);
+  const handleLanguageProgChange = (event) => {
+    setLanguageProg(event.target.value);
   };
 
   const refreshPage = () => {
@@ -170,7 +150,7 @@ const CodeEditor = () => {
         <label htmlFor="languageSelect">{t("lang")}</label>
         <select
           id="languageSelect"
-          onChange={handleLanguageChange}
+          onChange={handleLanguageProgChange}
           value={languageProg}
         >
           <option value="javascript">JavaScript</option>
@@ -211,16 +191,23 @@ const CodeEditor = () => {
       )}
 
       <CodeMirror
-        value={code}
+        value={codeContent}
         options={{
           mode: languageProg,
           theme: "material",
           lineNumbers: true,
           readOnly: !isConnected ? "nocursor" : false,
         }}
-        onBeforeChange={handleCodeChange}
-        minHeight="100vh"
-        height="100vh"
+        onBeforeChange={(editor, metadata, value) => {
+          setCodeContent(value);
+        }}
+        onChange={(editor, metadata, value) => {
+          console.log("onchange: " + value);
+          if (isConnected) 
+            setLastActionTime(Date.now()); // handleAction to update changes to API
+        }}
+        minHeight="100%"
+        height="100%"
       />
     </>
   );
