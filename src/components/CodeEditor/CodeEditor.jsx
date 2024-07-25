@@ -13,6 +13,7 @@ import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
 import LoadingPopup from "../LoadingPopup";
+import CodeDownloader from "./CodeDownloader";
 
 const CodeEditor = () => {
   const {
@@ -179,6 +180,8 @@ const CodeEditor = () => {
           <option value="css">CSS</option>
         </select>
         {!isSaved && <div>Is saving</div>}
+
+        <CodeDownloader filename={uniqueId} data={codeContent.code}></CodeDownloader>
       </div>
       {!isConnected && <LoadingPopup />}
       {!isConnected && (
