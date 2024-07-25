@@ -4,6 +4,9 @@
     "refresh": "Refresh",
     "noConnection": "No connection to the server.",
     "theme": "Theme:",
-    "lang": "Language:"
+    "lang": "Language:",
+    "login": "Log in",
+    "register": "Register",
+    "startHere": "Start here"
   }
 }

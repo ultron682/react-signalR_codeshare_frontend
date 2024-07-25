@@ -1,7 +1,7 @@
 .landing_container {
   text-align: center;
   color: #fff;
-  min-height: 90vh;
+  min-height: inherit;
   display: flex;
   flex-direction: column;
   justify-content: center;

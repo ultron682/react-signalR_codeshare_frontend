@@ -16,13 +16,6 @@ function Header() {
   } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(language);
 
-  // useEffect(() => {
-
-  //   if (user.email) {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, []);
-
   const handleChangeLanguage = () => {
     const newLanguage = currentLanguage === "en" ? "pl" : "en";
     setCurrentLanguage(newLanguage);

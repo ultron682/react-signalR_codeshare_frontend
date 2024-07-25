@@ -24,6 +24,10 @@ const AuthProvider = ({ children }) => {
       setUser(response.data);
     } catch (error) {
       console.error("Błąd podczas pobierania informacji o koncie:", error);
+
+      if (error.response.status === 401) {
+        logout();
+      }
     }
   }, [token]);
 
@@ -56,13 +60,21 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
-  const isLoggedIn = () => {
+  const isLoggedIn = () => { // to remove
     return token !== "";
   };
 
   return (
     <AuthContext.Provider
-      value={{ token, user, login, logout, isLoggedIn, deleteSnippet, fetchAccountInfo }}
+      value={{
+        token,
+        user,
+        login,
+        logout,
+        isLoggedIn,
+        deleteSnippet,
+        fetchAccountInfo,
+      }}
     >
       {children}
     </AuthContext.Provider>

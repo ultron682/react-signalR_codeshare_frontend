@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./LandingPage.module.css";
 import { useTheme } from "./ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const LandingPage = () => {
   const [uniqueId, setUniqueId] = useState("");
   const { theme } = useTheme();
+  const {
+    t,
+  } = useTranslation();
 
   const generateUniqueId = () => {
     return "xxxxx".replace(/x/g, () => {
@@ -23,15 +27,15 @@ const LandingPage = () => {
       <p>Your journey with Awesome Code experiences starts here.</p>
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>
-          Generate New Code Space
+          {t("startHere")}
         </Link>
       </div>
       <div className={styles.button_group}>
         <Link to="/account/login" className={styles.landing_button}>
-          Login
+          {t("login")}
         </Link>
         <Link to="/account/register" className={styles.landing_button}>
-          Register
+          {t("register")}
         </Link>
       </div>
     </div>

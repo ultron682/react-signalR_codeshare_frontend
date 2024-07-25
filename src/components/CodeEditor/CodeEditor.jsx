@@ -12,7 +12,6 @@ import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
 import LoadingPopup from "../LoadingPopup";
-import { use } from "i18next";
 
 const CodeEditor = () => {
   const {
@@ -33,27 +32,26 @@ const CodeEditor = () => {
 
   const { theme } = useTheme();
 
-  const [lastActionTime, setLastActionTime] = useState(null);
   const [timer, setTimer] = useState(null);
 
-
   useEffect(() => {
-    console.log(id);
     if (id) {
       setUniqueId(id);
     } else {
     }
   }, [id, navigate]);
 
-  const sendUpdatedCode = useCallback(() => {
+  const sendUpdatedCode = () => {
     console.log("timer: " + codeContent);
-    sendCode(codeContent);
+    sendCodeToServer(codeContent);
     clearTimeout(timer);
     setTimer(null);
-  }, []);
+  };
 
   useEffect(() => {
-    if (connection == null) return;
+    if (!connection) return;
+
+    console.log("on codeContent change: " + codeContent);
 
     if (timer) {
       clearTimeout(timer);
@@ -61,11 +59,9 @@ const CodeEditor = () => {
 
     const newTimer = setTimeout(() => {
       sendUpdatedCode();
-    }, 1000);
+    }, 500);
 
-    return () => {
-      clearTimeout(newTimer);
-    };
+    setTimer(newTimer);
   }, [codeContent]);
 
   useEffect(() => {
@@ -80,7 +76,7 @@ const CodeEditor = () => {
   }, []);
 
   useEffect(() => {
-    if (connection) {
+    if (connection && connection.state === signalR.HubConnectionState.Disconnected) {
       connection
         .start()
         .then((result) => {
@@ -104,7 +100,7 @@ const CodeEditor = () => {
         })
         .catch((e) => {
           setIsConnected(false);
-          console.log("Connection failed: ", e);
+          // console.log("Connection failed: ", e);
         });
 
       connection.onclose(() => {
@@ -119,7 +115,7 @@ const CodeEditor = () => {
     }
   }, [connection, uniqueId]);
 
-  const sendCode = async (code) => {
+  const sendCodeToServer = async (code) => {
     if (connection === null) {
       return;
     }

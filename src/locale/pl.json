@@ -4,6 +4,9 @@
     "refresh": "Odśwież",
     "noConnection": "Brak połączenia z serwerem.",
     "theme": "Motyw:",
-    "lang": "Język:"
+    "lang": "Język:",
+    "login": "Zaloguj",
+    "register": "Zarejestruj się",
+     "startHere": "Rozpocznij tutaj"
   }
 }
