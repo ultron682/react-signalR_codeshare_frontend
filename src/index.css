@@ -1,9 +1,14 @@
+html{
+  height: 100dvh;
+}
+
 :root {
   --background-light: #546e7a;
   --background-dark: #1c1c1c;
 }
 
 body {
+  height: 100dvh;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -25,4 +30,8 @@ body[data-theme='light'] {
 body[data-theme='dark'] {
   background-color: var(--background-dark);
   color: aliceblue;
+}
+
+#root {
+  height: 100%;
 }

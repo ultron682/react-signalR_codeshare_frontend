@@ -13,7 +13,7 @@ a {
 
 header {
     background-color: #282c34;
-    min-height: 50px;
+    height: 100px;
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -8,7 +8,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("token") != null) {
+    if (localStorage.getItem("token") !== null) {
       setToken(localStorage.getItem("token"));
     }
   }, []);

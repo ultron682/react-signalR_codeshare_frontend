@@ -24,13 +24,15 @@ function App() {
     <div className="app-container">
       <Header />
 
-      <Routes>
-        <Route path="/account/login" element={<LoginForm />} />
-        <Route path="/account/register" element={<RegisterForm />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/:id" element={<CodeEditor class="CodeEditor" />} />
-        <Route path="/" element={<LandingPage />} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/account/login" element={<LoginForm />} />
+          <Route path="/account/register" element={<RegisterForm />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/:id" element={<CodeEditor class="CodeEditor" />} />
+          <Route path="/" element={<LandingPage />} />
+        </Routes>
+      </main>
       <Footer />
     </div>
   );

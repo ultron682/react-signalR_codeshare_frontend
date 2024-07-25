@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -11,6 +11,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
+import LoadingPopup from "../LoadingPopup";
+import { use } from "i18next";
 
 const CodeEditor = () => {
   const {
@@ -22,7 +24,8 @@ const CodeEditor = () => {
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
   const { user } = useContext(AuthContext);
 
   const { id } = useParams();
@@ -35,33 +38,35 @@ const CodeEditor = () => {
 
 
   useEffect(() => {
-    console.log("useEffect lastActionTime");
-
-    if (timer || connection == null) {
-      return;
-    }
-
-    const newTimer = setTimeout(() => {
-      performDelayedAction();
-      clearTimeout(timer);
-      setTimer(null);
-    }, 500);
-
-    setTimer(newTimer);
-  }, [lastActionTime]);
-
-  const performDelayedAction = () => {
-    console.log("Delayed action executed");
-    sendCode(codeContent);
-  };
-
-  useEffect(() => {
     console.log(id);
     if (id) {
       setUniqueId(id);
     } else {
     }
   }, [id, navigate]);
+
+  const sendUpdatedCode = useCallback(() => {
+    console.log("timer: " + codeContent);
+    sendCode(codeContent);
+    clearTimeout(timer);
+    setTimer(null);
+  }, []);
+
+  useEffect(() => {
+    if (connection == null) return;
+
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    const newTimer = setTimeout(() => {
+      sendUpdatedCode();
+    }, 1000);
+
+    return () => {
+      clearTimeout(newTimer);
+    };
+  }, [codeContent]);
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -80,17 +85,19 @@ const CodeEditor = () => {
         .start()
         .then((result) => {
           console.log("Connected!");
-          setIsConnected(true);
-          setCodeContent("Loading...");
+
+          // setCodeContent("Loading...");
 
           if (uniqueId) {
             connection.invoke("GetCode", uniqueId).then((code) => {
               setCodeContent(code);
+              setIsConnected(true);
             });
 
-            connection.on("ReceiveCode", (receivedId, code) => {
+            connection.on("ReceivedCode", (receivedId, code) => {
               if (receivedId === uniqueId) {
                 setCodeContent(code);
+                setIsConnected(true);
               }
             });
           }
@@ -125,6 +132,8 @@ const CodeEditor = () => {
           code,
           user !== null ? user.id : ""
         );
+
+        setIsSaved(true);
       } catch (e) {
         console.log(e);
       }
@@ -144,8 +153,9 @@ const CodeEditor = () => {
   return (
     <>
       <div
-        className={theme === "light" ? "toolsBar-light" : "toolsBar-dark"}
-        style={{ marginBottom: 10 }}
+        className={
+          "toolsBar " + (theme === "light" ? "toolsBar-light" : "toolsBar-dark")
+        }
       >
         <label htmlFor="languageSelect">{t("lang")}</label>
         <select
@@ -157,8 +167,9 @@ const CodeEditor = () => {
           <option value="xml">XML</option>
           <option value="css">CSS</option>
         </select>
+        {!isSaved && <div>Is saving</div>}
       </div>
-
+      {!isConnected && <LoadingPopup />}
       {!isConnected && (
         <div
           style={{
@@ -200,11 +211,6 @@ const CodeEditor = () => {
         }}
         onBeforeChange={(editor, metadata, value) => {
           setCodeContent(value);
-        }}
-        onChange={(editor, metadata, value) => {
-          console.log("onchange: " + value);
-          if (isConnected) 
-            setLastActionTime(Date.now()); // handleAction to update changes to API
         }}
         minHeight="100%"
         height="100%"

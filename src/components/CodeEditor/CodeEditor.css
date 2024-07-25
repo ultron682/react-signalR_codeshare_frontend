@@ -1,11 +1,25 @@
-.CodeMirror {
-    min-height: 90vh!important;
+.CodeMirror,
+.react-codemirror2 {
+    min-height: inherit !important;
 }
 
-.toolsBar-light{
+.toolsBar {
+    height: 40px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+}
+
+.toolsBar-light {
     background-color: #6a8a98;
 }
 
-.toolsBar-dark{
+.toolsBar-dark {
     background-color: #25373f;
+}
+
+.CodeMirror-sizer {
+    min-height: 100% !important;
 }
