@@ -43,6 +43,7 @@ function App() {
           <Route index path="/" element={<LandingPage />} />
         </Routes>
       </main>
+      
       <Footer />
     </div>
   );

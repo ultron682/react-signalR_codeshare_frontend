@@ -1,6 +1,8 @@
-.CodeMirror,
-.react-codemirror2 {
-    min-height: inherit !important;
+.CodeEditorContainer{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 .toolsBar {
@@ -20,6 +22,12 @@
     background-color: #25373f;
 }
 
+.CodeMirror,
+.react-codemirror2 {
+    min-height: calc(100% - 40px) !important;
+    height: 100%;
+}
+
 .CodeMirror-sizer {
-    min-height: 100% !important;
+    min-height: calc(100% - 40px) !important;
 }

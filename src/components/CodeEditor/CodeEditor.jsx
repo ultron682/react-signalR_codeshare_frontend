@@ -163,7 +163,7 @@ const CodeEditor = () => {
   };
 
   return (
-    <>
+    <div class="CodeEditorContainer">
       <div
         className={
           "toolsBar " + (theme === "light" ? "toolsBar-light" : "toolsBar-dark")
@@ -230,7 +230,7 @@ const CodeEditor = () => {
         minHeight="100%"
         height="100%"
       />
-    </>
+    </div>
   );
 };
 
