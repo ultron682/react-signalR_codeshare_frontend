@@ -4,9 +4,9 @@ import { Routes, Route } from "react-router-dom";
 import CodeEditor from "./components/CodeEditor/CodeEditor";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import Account from "./components/Account";
+import LoginForm from "./components/Account/Login/LoginForm.jsx";
+import RegisterForm from "./components/Account/Register/RegisterForm.jsx";
+import AccountDashboard from "./components/Account/Dashboard/AccountDashboard.jsx";
 import LandingPage from "./components/LandingPage";
 import { AuthContext } from "./components/AuthContext";
 
@@ -35,7 +35,7 @@ function App() {
             path="/account"
             element={
               <ProtectedRoute token={token}>
-                <Account />
+                <AccountDashboard />
               </ProtectedRoute>
             }
           />

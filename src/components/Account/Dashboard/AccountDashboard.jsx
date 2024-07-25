@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../../AuthContext";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-const Account = () => {
+const AccountDashboard = () => {
   const { user, logout, deleteSnippet, fetchAccountInfo } = useContext(AuthContext);
   const location = useLocation();
 
@@ -52,4 +52,4 @@ const Account = () => {
   );
 };
 
-export default Account;
+export default AccountDashboard;
