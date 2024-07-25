@@ -3,6 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
+import "codemirror/theme/material-darker.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
@@ -20,7 +21,10 @@ const CodeEditor = () => {
   } = useTranslation();
   const { theme } = useTheme();
 
-  const [codeContent, setCodeContent] = useState({code: "", fromOtherUser: false});
+  const [codeContent, setCodeContent] = useState({
+    code: "",
+    fromOtherUser: false,
+  });
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
@@ -30,8 +34,6 @@ const CodeEditor = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-
-
 
   const [timer, setTimer] = useState(null);
 
@@ -50,19 +52,20 @@ const CodeEditor = () => {
   };
 
   useEffect(() => {
-    if (!connection || !isConnected || codeContent.fromOtherUser === true) return;
+    if (!connection || !isConnected || codeContent.fromOtherUser === true)
+      return;
 
     console.log("on codeContent change: " + codeContent.code);
 
-   // if (timer) {
-   //   clearTimeout(timer);
-    //}
+    if (timer) {
+      clearTimeout(timer);
+    }
 
-    //const newTimer = setTimeout(() => {
+    const newTimer = setTimeout(() => {
       sendUpdatedCode();
-    //}, 1000);
+    }, 300);
 
-   // setTimer(newTimer);
+    setTimer(newTimer);
   }, [codeContent]);
 
   useEffect(() => {
@@ -92,16 +95,14 @@ const CodeEditor = () => {
             connection
               .invoke("JoinGroup", uniqueId)
               .then((code) => {
-                console.log("JoinGroup code: " + code);
-                setCodeContent({code: code, fromOtherUser: true});
+                //console.log("JoinGroup code: " + code);
+                setCodeContent({ code: code, fromOtherUser: true });
                 setIsConnected(true);
 
                 connection.on("ReceivedCode", (receivedId, code) => {
-                  //if (receivedId === uniqueId) {
-                  console.log("Received code: " + code);
-                  setCodeContent({code: code, fromOtherUser: true});
+                  //console.log("Received code: " + code);
+                  setCodeContent({ code: code, fromOtherUser: true });
                   setIsConnected(true);
-                  //}
                 });
               })
               .catch((err) => console.error(err));
@@ -111,6 +112,11 @@ const CodeEditor = () => {
           setIsConnected(false);
           // console.log("Connection failed: ", e);
         });
+
+      connection.onreconnected(() => {
+        console.log("Connection reestablished.");
+        setIsConnected(true);
+      });
 
       connection.onclose(() => {
         console.log("Connection closed.");
@@ -210,13 +216,13 @@ const CodeEditor = () => {
         value={codeContent.code}
         options={{
           mode: languageProg,
-          theme: "material",
+          theme:  (theme === "light" ? "material" : "material-darker"),
           lineNumbers: true,
           lineWrapping: true,
           readOnly: !isConnected ? "nocursor" : false,
         }}
         onBeforeChange={(editor, metadata, value) => {
-          setCodeContent({code: value, fromOtherUser: false});
+          setCodeContent({ code: value, fromOtherUser: false });
         }}
         minHeight="100%"
         height="100%"
