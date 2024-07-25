@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -26,6 +26,7 @@ const CodeEditor = () => {
     code: "",
     fromOtherUser: false,
   });
+  const latestCodeContent = useRef(codeContent); //always newest codeContent due to setTimeout
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
@@ -46,8 +47,8 @@ const CodeEditor = () => {
   }, [id, navigate]);
 
   const sendUpdatedCode = () => {
-    console.log("sendUpdatedCode: " + codeContent.code);
-    sendCodeToServer(codeContent.code);
+    console.log("sent UpdatedCode: " + latestCodeContent.current.code);
+    sendCodeToServer(latestCodeContent.current.code);
     clearTimeout(timer);
     setTimer(null);
   };
@@ -57,6 +58,8 @@ const CodeEditor = () => {
       return;
 
     console.log("on codeContent change: " + codeContent.code);
+
+    latestCodeContent.current = codeContent;
 
     if (timer) {
       clearTimeout(timer);
@@ -181,7 +184,10 @@ const CodeEditor = () => {
         </select>
         {!isSaved && <div>Is saving</div>}
 
-        <CodeDownloader filename={uniqueId} data={codeContent.code}></CodeDownloader>
+        <CodeDownloader
+          filename={uniqueId}
+          data={codeContent.code}
+        ></CodeDownloader>
       </div>
       {!isConnected && <LoadingPopup />}
       {!isConnected && (
@@ -219,7 +225,7 @@ const CodeEditor = () => {
         value={codeContent.code}
         options={{
           mode: languageProg,
-          theme:  (theme === "light" ? "material" : "material-darker"),
+          theme: theme === "light" ? "material" : "material-darker",
           lineNumbers: true,
           lineWrapping: true,
           readOnly: !isConnected ? "nocursor" : false,
