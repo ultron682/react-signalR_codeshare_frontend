@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import "../../Form.css";
+import "../Form.css";
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');

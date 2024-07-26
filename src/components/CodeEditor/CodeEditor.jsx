@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaSpinner } from "react-icons/fa";
 
 import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
@@ -111,12 +110,13 @@ const CodeEditor = () => {
           if (uniqueId) {
             connection
               .invoke("JoinGroup", uniqueId)
-              .then((code) => {
-                //console.log("JoinGroup code: " + code);
-                setCodeContent({ code: code, fromOtherUser: true });
+              .then((res) => {
+                //console.log(res);
+                setCodeContent({ code: res.code, fromOtherUser: true });
+                setLanguageProg(res.selectedLang.name);
                 setIsConnected(true);
 
-                connection.on("ReceivedCode", (receivedId, code) => {
+                connection.on("ReceivedCode", (code) => {
                   //console.log("Received code: " + code);
                   setCodeContent({ code: code, fromOtherUser: true });
                   setIsConnected(true);

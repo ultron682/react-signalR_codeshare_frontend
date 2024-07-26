@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import "../../Form.css";
+import "../Form.css";
 import { AuthContext } from "../../AuthContext";
 import { useNavigate } from "react-router-dom";
 

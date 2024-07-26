@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 const AccountDashboard = () => {
-  const { user, logout, deleteSnippet, fetchAccountInfo } = useContext(AuthContext);
+  const { user, logout, deleteSnippet, fetchAccountInfo } =
+    useContext(AuthContext);
   const location = useLocation();
 
   useEffect(() => {
-    if(user !== null)
-    fetchAccountInfo(); // refresh
+    if (user !== null) fetchAccountInfo(); // refresh
   }, [location]);
 
   const logoutHandler = () => {
@@ -37,13 +37,19 @@ const AccountDashboard = () => {
           <h2>Twoje kody:</h2>
           {user && (
             <ul>
-              {user.codeSnippets.map((item) => (
-                <li key={item.$id}>
-                  <Link to={"/" + item.uniqueId}>{item.uniqueId}</Link>
-                  <p>{item.code}</p>
-                  <button onClick={() => handleDelete(item.uniqueId)}>Usuń</button>
-                </li>
-              ))}
+              {user.codeSnippets.length > 0 ? (
+                user.codeSnippets.map((item) => (
+                  <li key={item.$id}>
+                    <Link to={"/" + item.uniqueId}>{item.uniqueId}</Link>
+                    <p>{item.code}</p>
+                    <button onClick={() => handleDelete(item.uniqueId)}>
+                      Usuń
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <p>Jeszcze tu pusto</p>
+              )}
             </ul>
           )}
         </div>
