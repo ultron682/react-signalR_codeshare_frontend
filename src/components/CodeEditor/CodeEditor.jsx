@@ -111,9 +111,12 @@ const CodeEditor = () => {
             connection
               .invoke("JoinGroup", uniqueId)
               .then((res) => {
-                //console.log(res);
-                setCodeContent({ code: res.code, fromOtherUser: true });
-                setLanguageProg(res.selectedLang.name);
+                if (res !== null) {
+                  console.log(res);
+                  setCodeContent({ code: res.code, fromOtherUser: true });
+                  setLanguageProg(res.selectedLang.name);
+                }
+
                 setIsConnected(true);
 
                 connection.on("ReceivedCode", (code) => {

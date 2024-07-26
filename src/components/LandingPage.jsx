@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import styles from "./LandingPage.module.css";
 import { useTheme } from "./ThemeContext";
 import { useTranslation } from "react-i18next";
+import { AuthContext } from "./AuthContext";
 
 const LandingPage = () => {
   const [uniqueId, setUniqueId] = useState("");
   const { theme } = useTheme();
-  const {
-    t,
-  } = useTranslation();
+  const { t } = useTranslation();
+  const { user } = useContext(AuthContext);
 
   const generateUniqueId = () => {
     return "xxxxx".replace(/x/g, () => {
@@ -22,7 +22,11 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className={`${styles.landing_container} ${theme === 'light' ? styles.light_theme : styles.dark_theme}`}>
+    <div
+      className={`${styles.landing_container} ${
+        theme === "light" ? styles.light_theme : styles.dark_theme
+      }`}
+    >
       <h1>Welcome to Code Base</h1>
       <p>Your journey with Awesome Code experiences starts here.</p>
       <div className={styles.button_group}>
@@ -30,14 +34,17 @@ const LandingPage = () => {
           {t("startHere")}
         </Link>
       </div>
-      <div className={styles.button_group}>
-        <Link to="/account/login" className={styles.landing_button}>
-          {t("login")}
-        </Link>
-        <Link to="/account/register" className={styles.landing_button}>
-          {t("register")}
-        </Link>
-      </div>
+      {user == null &&
+      (
+        <div className={styles.button_group}>
+          <Link to="/account/login" className={styles.landing_button}>
+            {t("login")}
+          </Link>
+          <Link to="/account/register" className={styles.landing_button}>
+            {t("register")}
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
