@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
+
 import * as signalR from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -7,19 +11,21 @@ import "codemirror/theme/material-darker.css";
 import "codemirror/mode/javascript/javascript.js";
 import "codemirror/mode/xml/xml.js";
 import "codemirror/mode/css/css.js";
-import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from "react-router-dom";
+import "codemirror/mode/go/go.js";
+import "codemirror/mode/php/php.js";
+import "codemirror/mode/python/python.js";
+import "codemirror/mode/sql/sql.js";
+import "codemirror/mode/swift/swift.js";
+
 import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
 import LoadingPopup from "../LoadingPopup";
 import CodeDownloader from "./CodeDownloader";
+import { BounceLoader } from "react-spinners";
 
 const CodeEditor = () => {
-  const {
-    t,
-    i18n: { changeLanguage, language },
-  } = useTranslation();
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
   const [codeContent, setCodeContent] = useState({
@@ -39,6 +45,17 @@ const CodeEditor = () => {
 
   const [timer, setTimer] = useState(null);
 
+  const optionsLang = [
+    "javascript",
+    "xml",
+    "css",
+    "go",
+    "php",
+    "python",
+    "sql",
+    "swift",
+  ];
+
   useEffect(() => {
     if (id) {
       setUniqueId(id);
@@ -46,27 +63,23 @@ const CodeEditor = () => {
     }
   }, [id, navigate]);
 
-  const sendUpdatedCode = () => {
-    console.log("sent UpdatedCode: " + latestCodeContent.current.code);
-    sendCodeToServer(latestCodeContent.current.code);
-    clearTimeout(timer);
-    setTimer(null);
-  };
-
   useEffect(() => {
     if (!connection || !isConnected || codeContent.fromOtherUser === true)
       return;
 
-    console.log("on codeContent change: " + codeContent.code);
+    // console.log("on codeContent change: " + codeContent.code);
 
     latestCodeContent.current = codeContent;
-
+    setIsSaved(false);
     if (timer) {
       clearTimeout(timer);
     }
 
     const newTimer = setTimeout(() => {
-      sendUpdatedCode();
+      // console.log("sent UpdatedCode: " + latestCodeContent.current.code);
+      sendCodeToServer(latestCodeContent.current.code);
+      clearTimeout(timer);
+      setTimer(null);
     }, 300);
 
     setTimer(newTimer);
@@ -161,12 +174,8 @@ const CodeEditor = () => {
     setLanguageProg(event.target.value);
   };
 
-  const refreshPage = () => {
-    window.location.reload();
-  };
-
   return (
-    <div class="CodeEditorContainer">
+    <div className="CodeEditorContainer">
       <div
         className={
           "toolsBar " + (theme === "light" ? "toolsBar-light" : "toolsBar-dark")
@@ -178,16 +187,19 @@ const CodeEditor = () => {
           onChange={handleLanguageProgChange}
           value={languageProg}
         >
-          <option value="javascript">JavaScript</option>
-          <option value="xml">XML</option>
-          <option value="css">CSS</option>
+          {optionsLang.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang}
+            </option>
+          ))}
         </select>
-        {!isSaved && <div>Is saving</div>}
 
         <CodeDownloader
           filename={uniqueId}
           data={codeContent.code}
         ></CodeDownloader>
+
+        {<BounceLoader loading={!isSaved} size="20px" color="white" />}
       </div>
       {!isConnected && <LoadingPopup />}
       {!isConnected && (
@@ -206,7 +218,7 @@ const CodeEditor = () => {
         >
           <span>{t("noConnection")}</span>
           <button
-            onClick={refreshPage}
+            onClick={() => window.location.reload()}
             style={{
               backgroundColor: "#721c24",
               color: "white",
