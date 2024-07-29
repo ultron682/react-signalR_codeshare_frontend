@@ -11,7 +11,7 @@ function Header() {
   const { toggleTheme, theme } = useTheme();
   const { user } = useContext(AuthContext);
   const {
-    // t,
+     t,
     i18n: { changeLanguage, language },
   } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(language);
@@ -29,12 +29,12 @@ function Header() {
             <h1>CodeShare</h1>
           </Link>
         </div>
-        <nav className="nav">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
-        </nav>
+        {/* <nav className="nav">
+          <Link to="/contact">{t("contact")}</Link>
+        </nav> */}
         <div className="actions">
+        <Link to="/contact">{t("contact")}</Link>
+
           <button onClick={toggleTheme} className="theme-toggle-btn">
             {theme === "light" ? <MdLightMode size={24} /> : <MdDarkMode size={24} />}
           </button>

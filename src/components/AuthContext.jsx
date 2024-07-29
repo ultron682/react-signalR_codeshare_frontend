@@ -60,10 +60,6 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
-  const isLoggedIn = () => { // to remove
-    return token !== "";
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -71,7 +67,6 @@ const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
-        isLoggedIn,
         deleteSnippet,
         fetchAccountInfo,
       }}
