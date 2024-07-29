@@ -11,7 +11,7 @@ const AccountDashboard = () => {
 
   useEffect(() => {
     if (user !== null) fetchAccountInfo(); // refresh
-  }, [location]);
+  }, [location, user, fetchAccountInfo]);
 
   const logoutHandler = () => {
     logout();

@@ -11,7 +11,7 @@ function Header() {
   const { toggleTheme, theme } = useTheme();
   const { user } = useContext(AuthContext);
   const {
-    t,
+    // t,
     i18n: { changeLanguage, language },
   } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(language);

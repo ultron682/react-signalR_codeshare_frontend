@@ -7,6 +7,9 @@
     "lang": "Language:",
     "login": "Log in",
     "register": "Register",
-    "startHere": "Start here"
+    "startHere": "Start here",
+    "welcomeTo": "Welcome to CodeShare",
+    "yourJourney": "Your journey with Awesome Code experiences starts here.",
+    "footer": "CodeShare - a platform on which you can share and work simultaneously with others on code."
   }
 }

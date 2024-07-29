@@ -27,8 +27,8 @@ const LandingPage = () => {
         theme === "light" ? styles.light_theme : styles.dark_theme
       }`}
     >
-      <h1>Welcome to Code Base</h1>
-      <p>Your journey with Awesome Code experiences starts here.</p>
+      <h1>{t("welcomeTo")}</h1>
+      <p>{t("yourJourney")}</p>
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>
           {t("startHere")}
