@@ -178,6 +178,27 @@ const CodeEditor = () => {
     setLanguageProg(event.target.value);
   };
 
+  const updateLineInSnippet = async (lineNumber, newLineContent) => {
+    if (connection === null) {
+      return;
+    }
+
+    if (connection.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke(
+          "UpdateSnippetLine",
+          uniqueId,
+          lineNumber,
+          newLineContent
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      alert("No connection to server yet.");
+    }
+  };
+
   return (
     <div className="CodeEditorContainer">
       <div
