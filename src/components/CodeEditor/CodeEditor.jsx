@@ -63,30 +63,6 @@ const CodeEditor = () => {
   }, [id, navigate]);
 
   useEffect(() => {
-    const sendCodeToServer = async (code) => {
-      if (connection === null) {
-        return;
-      }
-  
-      if (connection.state === signalR.HubConnectionState.Connected) {
-        try {
-          await connection.invoke(
-            "BroadcastText",
-            uniqueId,
-            code,
-            user !== null ? user.id : ""
-          );
-  
-          setIsSaved(true);
-        } catch (e) {
-          console.log(e);
-        }
-      } else {
-        alert("No connection to server yet.");
-      }
-    };
-  
-
     if (!connection || !isConnected || codeContent.fromOtherUser === true)
       return;
 
@@ -106,8 +82,8 @@ const CodeEditor = () => {
     }, 300);
 
     setTimer(newTimer);
-  }, [codeContent, connection, isConnected, timer, uniqueId, user]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [codeContent, isConnected, codeContent.code]);
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -174,6 +150,29 @@ const CodeEditor = () => {
       });
     }
   }, [connection, uniqueId]);
+
+  const sendCodeToServer = async (code) => {
+    if (connection === null) {
+      return;
+    }
+
+    if (connection.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke(
+          "BroadcastText",
+          uniqueId,
+          code,
+          user !== null ? user.id : ""
+        );
+
+        setIsSaved(true);
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      alert("No connection to server yet.");
+    }
+  };
 
   const handleLanguageProgChange = (event) => {
     setLanguageProg(event.target.value);

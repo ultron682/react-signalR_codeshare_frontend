@@ -11,7 +11,8 @@ const AccountDashboard = () => {
 
   useEffect(() => {
     if (user !== null) fetchAccountInfo(); // refresh
-  }, [location, user, fetchAccountInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
 
   const logoutHandler = () => {
     logout();

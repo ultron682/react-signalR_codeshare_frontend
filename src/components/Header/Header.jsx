@@ -21,33 +21,39 @@ function Header() {
     setCurrentLanguage(newLanguage);
     changeLanguage(newLanguage);
   };
-
   return (
-    <header className={theme === "light" ? "light-theme" : "dark-theme"}>
-      <button onClick={toggleTheme}>
-        {theme === "light" ? (
-          <MdLightMode size={30} />
-        ) : (
-          <MdDarkMode size={30} />
-        )}
-      </button>
-      <Link to="/">
-        <h1>CodeShare</h1>
-      </Link>
-      {user ? (
-        <Link to="/account">
-          <VscAccount size={30} /> <div>{user.userName}</div>
-        </Link> // Wyświetlanie nazwy użytkownika, gdy jest zalogowany
-      ) : (
-        <Link to="/account/login">
-          <VscAccount size={30} />
-        </Link> // Przycisk do logowania/rejestracji, gdy użytkownik nie jest zalogowany
-      )}
-
-      <button type="button" onClick={handleChangeLanguage}>
-        PL/EN
-      </button>
+    <header className={`header ${theme === "light" ? "light-theme" : "dark-theme"}`}>
+      <div className="header-content">
+        <div className="logo-container">
+          <Link to="/" className="logo">
+            <h1>CodeShare</h1>
+          </Link>
+        </div>
+        <nav className="nav">
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
+        </nav>
+        <div className="actions">
+          <button onClick={toggleTheme} className="theme-toggle-btn">
+            {theme === "light" ? <MdLightMode size={24} /> : <MdDarkMode size={24} />}
+          </button>
+          <button onClick={handleChangeLanguage} className="language-toggle-btn">
+            {currentLanguage.toUpperCase()}
+          </button>
+          {user ? (
+            <Link to="/account" className="account-link">
+              <VscAccount size={24} /> <span>{user.userName}</span>
+            </Link>
+          ) : (
+            <Link to="/account/login" className="account-link">
+              <VscAccount size={24} />
+            </Link>
+          )}
+        </div>
+      </div>
     </header>
   );
 }
+
 export default Header;
