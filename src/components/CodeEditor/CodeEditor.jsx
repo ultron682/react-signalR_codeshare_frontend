@@ -178,6 +178,24 @@ const CodeEditor = () => {
     setLanguageProg(event.target.value);
   };
 
+  const handleEditorChange = (editor, data, value) => {
+    // setCodeContent({ code: value, fromOtherUser: false });
+
+    const changes = data?.changes || [];
+    changes.forEach((change) => {
+      const { from, to, text } = change;
+      const fromLine = from.line;
+      const toLine = to.line;
+
+      for (let i = fromLine; i <= toLine; i++) {
+        const newLineContent = editor.getLine(i);
+        console.log("Line " + i + " changed to: " + newLineContent);
+        updateLineInSnippet(i, newLineContent);
+      }
+    });
+  };
+
+
   const updateLineInSnippet = async (lineNumber, newLineContent) => {
     if (connection === null) {
       return;
@@ -185,6 +203,8 @@ const CodeEditor = () => {
 
     if (connection.state === signalR.HubConnectionState.Connected) {
       try {
+
+
         await connection.invoke(
           "UpdateSnippetLine",
           uniqueId,
@@ -270,6 +290,7 @@ const CodeEditor = () => {
         onBeforeChange={(editor, metadata, value) => {
           setCodeContent({ code: value, fromOtherUser: false });
         }}
+        onChange={handleEditorChange}
         minHeight="100%"
         height="100%"
       />
