@@ -5,3 +5,14 @@
 .title {
     margin: 0;
 }
+
+.light_theme {
+    background-color: var(--background-light, #ffffff);
+    color: var(--text-dark, #000000);
+}
+
+.dark_theme {
+    background-color: var(--background-dark, #282c34);
+    color: var(--text-light, #919191);
+}
+

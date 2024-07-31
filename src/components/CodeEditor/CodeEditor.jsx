@@ -139,7 +139,7 @@ const CodeEditor = () => {
       checkLinesInCodeChange();
       clearTimeout(timer);
       setTimer(null);
-    }, 1000);
+    }, 2000);
 
     setTimer(newTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
