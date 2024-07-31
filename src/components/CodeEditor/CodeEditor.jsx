@@ -29,12 +29,15 @@ import LoadingPopup from "../LoadingPopup";
 import CodeDownloader from "./CodeDownloader";
 import { BounceLoader } from "react-spinners";
 
+import { v4 as uuidv4 } from 'uuid';
+
+
 const CodeEditor = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const editor = useRef(null);
-  const [unsavedChanges, setUnsavedChanges] = useState([]);
+  // const editor = useRef(null);
+  const clientIdRef = useRef(uuidv4());
 
   const [codeContent, setCodeContent] = useState({
     code: "",
@@ -50,6 +53,8 @@ const CodeEditor = () => {
   // const latestSavedCodeContent = useRef(savedCodeContent);
 
   const [connection, setConnection] = useState(null);
+  const connectionRef = useRef(null);
+
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
@@ -207,17 +212,17 @@ const CodeEditor = () => {
                   res.code = res.code.replace(/(?:\r\n|\r|\n)/g, "\n");
                   console.log(JSON.stringify(res.code));
 
-                  setCodeContent({
-                    ...codeContent,
-                    code: res.code,
-                    fromOtherUser: true,
-                  });
+                  // setCodeContent({
+                  //   ...codeContent,
+                  //   code: res.code,
+                  //   fromOtherUser: true,
+                  // });
 
-                  savedCodeContent.current = {
-                    ...codeContent,
-                    code: res.code,
-                    fromOtherUser: true,
-                  };
+                  // savedCodeContent.current = {
+                  //   ...codeContent,
+                  //   code: res.code,
+                  //   fromOtherUser: true,
+                  // };
 
                   setLanguageProg(res.selectedLang.name);
                 }
@@ -226,10 +231,19 @@ const CodeEditor = () => {
                   onReceivedNewLineCode(lineNumber, newLine)
                 );
 
+                connection.on("ReceiveCodeUpdate", (metadata) => {
+                  applyChange(metadata);
+                });
+
                 setIsConnected(true);
               })
-              .catch((err) => console.error(err));
+              .catch((err) => {
+                console.error(err);
+                setIsConnected(false);
+              });
           }
+
+          connectionRef.current = connection;
         })
         .catch((e) => {
           setIsConnected(false);
@@ -262,6 +276,16 @@ const CodeEditor = () => {
 
   const handleLanguageProgChange = (event) => {
     setLanguageProg(event.target.value);
+  };
+
+  const applyChange = (metadata) => {
+    const editor = document.querySelector(".CodeMirror").CodeMirror;
+    editor.replaceRange(metadata.text.join("\n"), metadata.from, metadata.to);
+  };
+
+  const handleCodeChange = (metadata) => {
+    // Send the metadata with the code change to the server
+    connectionRef.current.invoke("SendCodeUpdate", metadata);
   };
 
   return (
@@ -321,16 +345,7 @@ const CodeEditor = () => {
         }}
         onChange={(editor, metadata, value) => {
           console.log(metadata);
-          setUnsavedChanges([
-            ...unsavedChanges,
-            {
-              text: metadata.text,
-              from: metadata.from,
-              to: metadata.to,
-            },
-          ]);
-
-          console.log(unsavedChanges);
+          handleCodeChange(metadata);
         }}
         minHeight="100%"
         height="100%"
