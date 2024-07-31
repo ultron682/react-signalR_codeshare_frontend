@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -31,13 +37,14 @@ const CodeEditor = () => {
     code: "",
     fromOtherUser: false,
   });
-  const [savedCodeContent, setSavedCodeContent] = useState({
+
+  const savedCodeContent = useRef({
     code: "",
     fromOtherUser: false,
   });
 
-  const latestCodeContent = useRef(codeContent); //always newest codeContent due to setTimeout
-  const latestSavedCodeContent = useRef(savedCodeContent);
+  // const latestCodeContent = useRef(codeContent); //always newest codeContent due to setTimeout
+  // const latestSavedCodeContent = useRef(savedCodeContent);
 
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
@@ -85,7 +92,7 @@ const CodeEditor = () => {
         );
 
         setIsSaved(true);
-        latestSavedCodeContent.current = latestCodeContent;
+        savedCodeContent.current = codeContent;
       } catch (e) {
         console.log(e);
       }
@@ -96,12 +103,11 @@ const CodeEditor = () => {
 
   const checkLinesInCodeChange = () => {
     const newCodeLines = codeContent.code.split("\n");
-    const oldCodeLines = savedCodeContent.code.split("\n");
+    const oldCodeLines = savedCodeContent.current.code.split("\n");
 
-    console.log(oldCodeLines);
-    console.log(newCodeLines);
+    // console.log(oldCodeLines);
+    // console.log(newCodeLines);
 
-    // if (newCodeLines.length <= oldCodeLines.length) {
     for (let i = 0; i < newCodeLines.length; i++) {
       if (newCodeLines[i] !== oldCodeLines[i]) {
         console.log(
@@ -115,9 +121,6 @@ const CodeEditor = () => {
         updateLineInSnippet(i, newCodeLines[i]);
       }
     }
-    // } else {
-    //   console.log("old line: ");
-    // }
   };
 
   useEffect(() => {
@@ -126,16 +129,13 @@ const CodeEditor = () => {
 
     // console.log("on codeContent change: " + codeContent.code);
 
-    latestCodeContent.current = codeContent;
+    setCodeContent(codeContent);
     setIsSaved(false);
     if (timer) {
       clearTimeout(timer);
     }
 
     const newTimer = setTimeout(() => {
-      // console.log("sent UpdatedCode: " + latestCodeContent.current.code);
-
-      // sendCodeToServer(latestCodeContent.current.code);
       checkLinesInCodeChange();
       clearTimeout(timer);
       setTimer(null);
@@ -155,6 +155,22 @@ const CodeEditor = () => {
 
     setConnection(newConnection);
   }, []);
+
+  const onReceivedNewLineCode = (lineNumber, newLine) => {
+    console.log("Received line: " + lineNumber + " " + newLine);
+
+    setCodeContent((prevCodeContent) => {
+      const splittedCode = prevCodeContent.code.split("\n");
+      splittedCode[lineNumber] = newLine;
+      const newJoinedCode = splittedCode.join("\n");
+      console.log("New joined code:", newJoinedCode);
+  
+      const updatedCodeContent = { ...prevCodeContent, code: newJoinedCode, fromOtherUser: true };
+      savedCodeContent.current = updatedCodeContent;
+      console.log("Updated code content:", updatedCodeContent);
+      return updatedCodeContent;
+    });
+  };
 
   useEffect(() => {
     if (
@@ -177,33 +193,21 @@ const CodeEditor = () => {
                   console.log(JSON.stringify(res.code));
 
                   setCodeContent({
+                    ...codeContent,
                     code: res.code,
                     fromOtherUser: true,
                   });
 
-                  setSavedCodeContent({
+                  savedCodeContent.current = {
+                    ...codeContent,
                     code: res.code,
                     fromOtherUser: true,
-                  });
+                  };
 
                   setLanguageProg(res.selectedLang.name);
                 }
 
-                connection.on("ReceivedNewLineCode", (lineNumber, newLine) => {
-                  console.log("Received line: " + lineNumber + " " + newLine);
-                  console.log(latestCodeContent.current);
-
-                  const splittedCode =
-                    latestCodeContent.current.code.split("\n");
-                  console.log(splittedCode);
-                  splittedCode[lineNumber] = newLine;
-
-                  const newJoinedCode = splittedCode.join("\n");
-                  console.log(newJoinedCode);
-
-                  setCodeContent({ code: newJoinedCode, fromOtherUser: true });
-                  setSavedCodeContent(newJoinedCode);
-                });
+                connection.on("ReceivedNewLineCode", (lineNumber, newLine) => onReceivedNewLineCode(lineNumber, newLine));
 
                 setIsConnected(true);
               })
@@ -230,6 +234,13 @@ const CodeEditor = () => {
         setIsConnected(false);
       });
     }
+
+    return () => {
+      if (connection) {
+        console.log("Connection closed ReceivedNewLineCode.");
+        connection.off("ReceivedNewLineCode");
+      }
+    };
   }, [connection, uniqueId]);
 
   const handleLanguageProgChange = (event) => {
