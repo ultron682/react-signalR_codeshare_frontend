@@ -60,7 +60,6 @@ const keyframes = `
   }
 `;
 
-// Dodajemy style keyframes do dokumentu
 const styleSheet = document.styleSheets[0];
 styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
 
