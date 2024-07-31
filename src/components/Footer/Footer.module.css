@@ -7,12 +7,12 @@
 }
 
 .light_theme {
-    background-color: var(--background-light, #ffffff);
-    color: var(--text-dark, #000000);
+    background-color: var(--background-light);
+    color: var(--text-dark, #dddddd);
 }
 
 .dark_theme {
-    background-color: var(--background-dark, #282c34);
+    background-color: var(--background-dark);
     color: var(--text-light, #919191);
 }
 
