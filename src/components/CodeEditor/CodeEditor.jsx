@@ -33,6 +33,8 @@ const CodeEditor = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
+  const editor = useRef(null);
+
   const [codeContent, setCodeContent] = useState({
     code: "",
     fromOtherUser: false,
@@ -299,6 +301,12 @@ const CodeEditor = () => {
       )}
 
       <CodeMirror
+        editorDidMount={(editor) => {
+          editor.current = editor;
+        }}
+        editorWillUnmount={(editor) => {
+          editor.current = null;
+        }}
         value={codeContent.code}
         options={{
           mode: languageProg,
@@ -309,6 +317,9 @@ const CodeEditor = () => {
         }}
         onBeforeChange={(editor, metadata, value) => {
           setCodeContent({ code: value, fromOtherUser: false });
+        }}
+        onChange={(editor, metadata, value) => {
+          console.log("onChange: " + JSON.stringify(metadata));
         }}
         minHeight="100%"
         height="100%"
