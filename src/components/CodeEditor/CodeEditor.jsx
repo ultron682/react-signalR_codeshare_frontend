@@ -95,16 +95,23 @@ const CodeEditor = () => {
   };
 
   const checkLinesInCodeChange = () => {
-    const oldCodeLines = latestSavedCodeContent.current.code.split("\n");
-    const newCodeLines = latestCodeContent.current.code.split("\n");
+    const newCodeLines = codeContent.code.split("\n");
+    const oldCodeLines = savedCodeContent.code.split("\n");
 
-    //console.log(oldCodeLines);
-    //console.log(newCodeLines);
+    console.log(oldCodeLines);
+    console.log(newCodeLines);
 
     // if (newCodeLines.length <= oldCodeLines.length) {
     for (let i = 0; i < newCodeLines.length; i++) {
       if (newCodeLines[i] !== oldCodeLines[i]) {
-        console.log("Changed line: " + i + "  " + newCodeLines[i]);
+        console.log(
+          "Changed line: " +
+            i +
+            "  " +
+            JSON.stringify(oldCodeLines[i]) +
+            " : " +
+            JSON.stringify(newCodeLines[i])
+        );
         updateLineInSnippet(i, newCodeLines[i]);
       }
     }
@@ -169,7 +176,6 @@ const CodeEditor = () => {
                   res.code = res.code.replace(/(?:\r\n|\r|\n)/g, "\n");
                   console.log(JSON.stringify(res.code));
 
-                  //setCodeContent({ code: res.code, fromOtherUser: true });
                   setCodeContent({
                     code: res.code,
                     fromOtherUser: true,
@@ -183,13 +189,12 @@ const CodeEditor = () => {
                   setLanguageProg(res.selectedLang.name);
                 }
 
-                setIsConnected(true);
-
                 connection.on("ReceivedNewLineCode", (lineNumber, newLine) => {
                   console.log("Received line: " + lineNumber + " " + newLine);
                   console.log(latestCodeContent.current);
 
-                  const splittedCode = latestCodeContent.current.code.split("\n");
+                  const splittedCode =
+                    latestCodeContent.current.code.split("\n");
                   console.log(splittedCode);
                   splittedCode[lineNumber] = newLine;
 
@@ -199,6 +204,8 @@ const CodeEditor = () => {
                   setCodeContent({ code: newJoinedCode, fromOtherUser: true });
                   setSavedCodeContent(newJoinedCode);
                 });
+
+                setIsConnected(true);
               })
               .catch((err) => console.error(err));
           }
