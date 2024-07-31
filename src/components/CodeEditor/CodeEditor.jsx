@@ -49,7 +49,7 @@ const CodeEditor = () => {
   const [connection, setConnection] = useState(null);
   const [uniqueId, setUniqueId] = useState("");
   const [languageProg, setLanguageProg] = useState("javascript");
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [isSaved, setIsSaved] = useState(true);
   const { user } = useContext(AuthContext);
 
@@ -101,12 +101,18 @@ const CodeEditor = () => {
     }
   };
 
+  const codeContentRef = useRef(codeContent);
+
+  useEffect(() => {
+    codeContentRef.current = codeContent;
+  }, [codeContent]);
+
   const checkLinesInCodeChange = () => {
-    const newCodeLines = codeContent.code.split("\n");
+    const newCodeLines = codeContentRef.current.code.split("\n");
     const oldCodeLines = savedCodeContent.current.code.split("\n");
 
-    // console.log(oldCodeLines);
-    // console.log(newCodeLines);
+    console.log(oldCodeLines);
+    console.log(newCodeLines);
 
     for (let i = 0; i < newCodeLines.length; i++) {
       if (newCodeLines[i] !== oldCodeLines[i]) {
@@ -131,6 +137,7 @@ const CodeEditor = () => {
 
     setCodeContent(codeContent);
     setIsSaved(false);
+
     if (timer) {
       clearTimeout(timer);
     }
@@ -164,8 +171,13 @@ const CodeEditor = () => {
       splittedCode[lineNumber] = newLine;
       const newJoinedCode = splittedCode.join("\n");
       console.log("New joined code:", newJoinedCode);
-  
-      const updatedCodeContent = { ...prevCodeContent, code: newJoinedCode, fromOtherUser: true };
+
+      const updatedCodeContent = {
+        ...prevCodeContent,
+        code: newJoinedCode,
+        fromOtherUser: true,
+      };
+
       savedCodeContent.current = updatedCodeContent;
       console.log("Updated code content:", updatedCodeContent);
       return updatedCodeContent;
@@ -207,7 +219,9 @@ const CodeEditor = () => {
                   setLanguageProg(res.selectedLang.name);
                 }
 
-                connection.on("ReceivedNewLineCode", (lineNumber, newLine) => onReceivedNewLineCode(lineNumber, newLine));
+                connection.on("ReceivedNewLineCode", (lineNumber, newLine) =>
+                  onReceivedNewLineCode(lineNumber, newLine)
+                );
 
                 setIsConnected(true);
               })

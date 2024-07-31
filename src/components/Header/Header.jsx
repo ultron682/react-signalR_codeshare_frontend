@@ -33,8 +33,6 @@ function Header() {
           <Link to="/contact">{t("contact")}</Link>
         </nav> */}
         <div className="actions">
-        <Link to="/contact">{t("contact")}</Link>
-
           <button onClick={toggleTheme} className="theme-toggle-btn">
             {theme === "light" ? <MdLightMode size={24} /> : <MdDarkMode size={24} />}
           </button>
