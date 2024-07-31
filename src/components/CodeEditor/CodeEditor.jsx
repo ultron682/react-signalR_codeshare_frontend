@@ -34,6 +34,7 @@ const CodeEditor = () => {
   const { theme } = useTheme();
 
   const editor = useRef(null);
+  const [unsavedChanges, setUnsavedChanges] = useState([]);
 
   const [codeContent, setCodeContent] = useState({
     code: "",
@@ -319,7 +320,17 @@ const CodeEditor = () => {
           setCodeContent({ code: value, fromOtherUser: false });
         }}
         onChange={(editor, metadata, value) => {
-          console.log("onChange: " + JSON.stringify(metadata));
+          console.log(metadata);
+          setUnsavedChanges([
+            ...unsavedChanges,
+            {
+              text: metadata.text,
+              from: metadata.from,
+              to: metadata.to,
+            },
+          ]);
+
+          console.log(unsavedChanges);
         }}
         minHeight="100%"
         height="100%"
