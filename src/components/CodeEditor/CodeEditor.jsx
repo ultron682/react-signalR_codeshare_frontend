@@ -29,8 +29,9 @@ import LoadingPopup from "../LoadingPopup";
 import CodeDownloader from "./CodeDownloader";
 import { BounceLoader } from "react-spinners";
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
+var ignoreEventBecauseIAmTriggeringIt = false;
 
 const CodeEditor = () => {
   const { t } = useTranslation();
@@ -38,6 +39,8 @@ const CodeEditor = () => {
 
   // const editor = useRef(null);
   const clientIdRef = useRef(uuidv4());
+  const localChangeRef = useRef(false); // Track local changes
+  const timeoutRef = useRef(null);
 
   const [codeContent, setCodeContent] = useState({
     code: "",
@@ -65,6 +68,12 @@ const CodeEditor = () => {
   const navigate = useNavigate();
 
   const [timer, setTimer] = useState(null);
+  const [changes, setChanges] = useState([]);
+  const changesRef = useRef(changes);
+  changesRef.current = changes;
+
+  const [changesApplied, setChangesApplied] = useState([]);
+  const changesAppliedRef = useRef(changesApplied);
 
   const optionsLang = [
     "javascript",
@@ -84,81 +93,102 @@ const CodeEditor = () => {
     }
   }, [id, navigate]);
 
-  const updateLineInSnippet = async (lineNumber, newLineContent) => {
-    if (connection === null) {
-      return;
-    }
+  // const updateLineInSnippet = async (lineNumber, newLineContent) => {
+  //   if (connection === null) {
+  //     return;
+  //   }
 
-    if (connection.state === signalR.HubConnectionState.Connected) {
-      try {
-        await connection.invoke(
-          "UpdateSnippetLine",
-          uniqueId,
-          user !== null ? user.id : "",
-          lineNumber,
-          newLineContent
-        );
+  //   if (connection.state === signalR.HubConnectionState.Connected) {
+  //     try {
+  //       await connection.invoke(
+  //         "UpdateSnippetLine",
+  //         uniqueId,
+  //         user !== null ? user.id : "",
+  //         lineNumber,
+  //         newLineContent
+  //       );
 
-        setIsSaved(true);
-        savedCodeContent.current = codeContent;
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      alert("No connection to server yet.");
-    }
-  };
+  //       setIsSaved(true);
+  //       savedCodeContent.current = codeContent;
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   } else {
+  //     alert("No connection to server yet.");
+  //   }
+  // };
 
-  const codeContentRef = useRef(codeContent);
+  // const codeContentRef = useRef(codeContent);
 
-  useEffect(() => {
-    codeContentRef.current = codeContent;
-  }, [codeContent]);
+  // useEffect(() => {
+  //   codeContentRef.current = codeContent;
+  // }, [codeContent]);
 
-  const checkLinesInCodeChange = () => {
-    const newCodeLines = codeContentRef.current.code.split("\n");
-    const oldCodeLines = savedCodeContent.current.code.split("\n");
+  // const checkLinesInCodeChange = () => {
+  //   const newCodeLines = codeContentRef.current.code.split("\n");
+  //   const oldCodeLines = savedCodeContent.current.code.split("\n");
 
-    console.log(oldCodeLines);
-    console.log(newCodeLines);
+  //   console.log(oldCodeLines);
+  //   console.log(newCodeLines);
 
-    for (let i = 0; i < newCodeLines.length; i++) {
-      if (newCodeLines[i] !== oldCodeLines[i]) {
-        console.log(
-          "Changed line: " +
-            i +
-            "  " +
-            JSON.stringify(oldCodeLines[i]) +
-            " : " +
-            JSON.stringify(newCodeLines[i])
-        );
-        updateLineInSnippet(i, newCodeLines[i]);
-      }
-    }
-  };
+  //   for (let i = 0; i < newCodeLines.length; i++) {
+  //     if (newCodeLines[i] !== oldCodeLines[i]) {
+  //       console.log(
+  //         "Changed line: " +
+  //           i +
+  //           "  " +
+  //           JSON.stringify(oldCodeLines[i]) +
+  //           " : " +
+  //           JSON.stringify(newCodeLines[i])
+  //       );
+  //       updateLineInSnippet(i, newCodeLines[i]);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    if (!connection || !isConnected || codeContent.fromOtherUser === true)
-      return;
+  // useEffect(() => {
+  //   if (!connection || !isConnected || codeContent.fromOtherUser === true)
+  //     return;
 
-    // console.log("on codeContent change: " + codeContent.code);
+  //   // console.log("on codeContent change: " + codeContent.code);
 
-    setCodeContent(codeContent);
-    setIsSaved(false);
+  //   setCodeContent(codeContent);
+  //   setIsSaved(false);
 
-    if (timer) {
-      clearTimeout(timer);
-    }
+  //   if (timer) {
+  //     clearTimeout(timer);
+  //   }
 
-    const newTimer = setTimeout(() => {
-      checkLinesInCodeChange();
-      clearTimeout(timer);
-      setTimer(null);
-    }, 2000);
+  //   const newTimer = setTimeout(() => {
+  //     checkLinesInCodeChange();
+  //     clearTimeout(timer);
+  //     setTimer(null);
+  //   }, 2000);
 
-    setTimer(newTimer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [codeContent]);
+  //   setTimer(newTimer);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [codeContent]);
+
+  // const onReceivedNewLineCode = (lineNumber, newLine) => {
+  //   console.log("Received line: " + lineNumber + " " + newLine);
+
+  //   setCodeContent((prevCodeContent) => {
+  //     const splittedCode = prevCodeContent.code.split("\n");
+  //     splittedCode[lineNumber] = newLine;
+  //     const newJoinedCode = splittedCode.join("\n");
+  //     console.log("New joined code:", newJoinedCode);
+
+  //     const updatedCodeContent = {
+  //       ...prevCodeContent,
+  //       code: newJoinedCode,
+  //       fromOtherUser: true,
+  //     };
+
+  //     savedCodeContent.current = updatedCodeContent;
+  //     console.log("Updated code content:", updatedCodeContent);
+  //     return updatedCodeContent;
+  //   });
+  // };
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -170,27 +200,6 @@ const CodeEditor = () => {
 
     setConnection(newConnection);
   }, []);
-
-  const onReceivedNewLineCode = (lineNumber, newLine) => {
-    console.log("Received line: " + lineNumber + " " + newLine);
-
-    setCodeContent((prevCodeContent) => {
-      const splittedCode = prevCodeContent.code.split("\n");
-      splittedCode[lineNumber] = newLine;
-      const newJoinedCode = splittedCode.join("\n");
-      console.log("New joined code:", newJoinedCode);
-
-      const updatedCodeContent = {
-        ...prevCodeContent,
-        code: newJoinedCode,
-        fromOtherUser: true,
-      };
-
-      savedCodeContent.current = updatedCodeContent;
-      console.log("Updated code content:", updatedCodeContent);
-      return updatedCodeContent;
-    });
-  };
 
   useEffect(() => {
     if (
@@ -208,31 +217,34 @@ const CodeEditor = () => {
             connection
               .invoke("JoinGroup", uniqueId)
               .then((res) => {
-                if (res !== null) {
-                  res.code = res.code.replace(/(?:\r\n|\r|\n)/g, "\n");
-                  console.log(JSON.stringify(res.code));
+                // if (res !== null) {
+                //   res.code = res.code.replace(/(?:\r\n|\r|\n)/g, "\n");
+                //   console.log(JSON.stringify(res.code));
 
-                  // setCodeContent({
-                  //   ...codeContent,
-                  //   code: res.code,
-                  //   fromOtherUser: true,
-                  // });
+                //   // setCodeContent({
+                //   //   ...codeContent,
+                //   //   code: res.code,
+                //   //   fromOtherUser: true,
+                //   // });
 
-                  // savedCodeContent.current = {
-                  //   ...codeContent,
-                  //   code: res.code,
-                  //   fromOtherUser: true,
-                  // };
+                //   // savedCodeContent.current = {
+                //   //   ...codeContent,
+                //   //   code: res.code,
+                //   //   fromOtherUser: true,
+                //   // };
 
-                  setLanguageProg(res.selectedLang.name);
-                }
+                //   setLanguageProg(res.selectedLang.name);
+                // }
 
-                connection.on("ReceivedNewLineCode", (lineNumber, newLine) =>
-                  onReceivedNewLineCode(lineNumber, newLine)
-                );
+                // connection.on("ReceivedNewLineCode", (lineNumber, newLine) =>
+                //   onReceivedNewLineCode(lineNumber, newLine)
+                // );
 
-                connection.on("ReceiveCodeUpdate", (metadata) => {
-                  applyChange(metadata);
+                connection.on("ReceiveCodeUpdate", (metadataList) => {
+                  // Ignore changes from this client
+                  if (metadataList[0]?.clientId !== clientIdRef.current) {
+                    applyChanges(metadataList);
+                  }
                 });
 
                 setIsConnected(true);
@@ -278,14 +290,44 @@ const CodeEditor = () => {
     setLanguageProg(event.target.value);
   };
 
-  const applyChange = (metadata) => {
+  const applyChanges = (metadataList) => {
+    console.log("applyChanges: ", metadataList);
+
+    ignoreEventBecauseIAmTriggeringIt = true;
+
     const editor = document.querySelector(".CodeMirror").CodeMirror;
-    editor.replaceRange(metadata.text.join("\n"), metadata.from, metadata.to);
+    localChangeRef.current = true;
+    metadataList.forEach((metadata) => {
+      editor.replaceRange(metadata.text.join("\n"), metadata.from, metadata.to);
+    });
+
+    // ignoreEventBecauseIAmTriggeringIt = false;
   };
 
   const handleCodeChange = (metadata) => {
-    // Send the metadata with the code change to the server
-    connectionRef.current.invoke("SendCodeUpdate", metadata);
+    if (ignoreEventBecauseIAmTriggeringIt) {
+      return;
+    }
+
+    console.log("handleCodeChange: ", metadata);
+
+    // Add change to the list of changes
+    setChanges((prevChanges) => [
+      { ...metadata, clientId: clientIdRef.current, changeId: uuidv4() },
+      ...prevChanges,
+    ]);
+
+    // Clear the timeout if it's set
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Set a new timeout to send the changes after 500ms
+    timeoutRef.current = setTimeout(() => {
+      connectionRef.current.invoke("SendCodeUpdate", changesRef.current);
+      console.log("SendCodeUpdate: ", changesRef.current);
+      setChanges([]);
+    }, 500);
   };
 
   return (
@@ -344,7 +386,7 @@ const CodeEditor = () => {
           setCodeContent({ code: value, fromOtherUser: false });
         }}
         onChange={(editor, metadata, value) => {
-          console.log(metadata);
+          //console.log(metadata);
           handleCodeChange(metadata);
         }}
         minHeight="100%"
