@@ -3,7 +3,6 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
-import { use } from "i18next";
 
 const CollaborativeEditor = ({ documentId }) => {
   const [connection, setConnection] = useState(null);
@@ -14,17 +13,6 @@ const CollaborativeEditor = ({ documentId }) => {
   const isServerChangeRef = useRef(false);
 
   const editorRef = useRef(null);
-
-  const setValueWithoutTriggeringOnChange = (newValue) => {
-    if (editorRef.current) {
-      //editorRef.current.editor.off("change");
-
-      //console.log(editorRef.current);
-      editorRef.current.editor.getDoc().setValue(newValue);
-      //console.log(editorRef.current);
-      //editorRef.current.editor.on("change");
-    }
-  };
 
   useEffect(() => {
     const connect = async () => {
@@ -79,11 +67,12 @@ const CollaborativeEditor = ({ documentId }) => {
         connection.stop();
       }
     };
+    // eslint-disable-next-line
   }, [documentId]);
 
-  useEffect(() => {
+  useEffect(() => {// TESTED AND DONT NEED
     isServerChangeRef.current = false;
-  }, [documentContent]);
+  }, [documentContent]); 
 
   const applyChangeSet = (doc, changeSet) => {
     let newChanges = undefined;
