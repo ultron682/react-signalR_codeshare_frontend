@@ -1,84 +1,99 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { HubConnectionBuilder } from '@microsoft/signalr';
-import { Controlled as CodeMirror } from 'react-codemirror2';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript';
+import React, { useState, useEffect, useRef } from "react";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { Controlled as CodeMirror } from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+import "codemirror/mode/javascript/javascript";
 
 const CollaborativeEditor = ({ documentId }) => {
-    const [connection, setConnection] = useState(null);
-    const [documentContent, setDocumentContent] = useState("");
-    const editorRef = useRef(null);
+  const [connection, setConnection] = useState(null);
+  const [documentContent, setDocumentContent] = useState("");
+  const editorRef = useRef(null);
 
-    useEffect(() => {
-        const connect = async () => {
-            const newConnection = new HubConnectionBuilder()
-            .withUrl('http://localhost:5555/codesharehub', {
-                       withCredentials: false,
-                     })
-            .withAutomaticReconnect()
-            .build();
+  useEffect(() => {
+    const connect = async () => {
+      const newConnection = new HubConnectionBuilder()
+        .withUrl("http://localhost:5555/codesharehub", {
+          withCredentials: false,
+        })
+        .withAutomaticReconnect()
+        .build();
 
-            newConnection.on("ReceiveDocument", (doc, changes) => {
-                setDocumentContent(doc);
-            });
+      newConnection.on("ReceiveDocument", (doc, changes) => {
+        setDocumentContent(doc);
+      });
 
-            newConnection.on("ReceiveUpdate", (changeSetJson) => {
-                const changeSet = JSON.parse(changeSetJson);
-                const updatedDoc = applyChangeSet(documentContent, changeSet);
-                setDocumentContent(updatedDoc);
-            });
+      newConnection.on("ReceiveUpdate", (changeSetJson) => {
+        const changeSet = JSON.parse(changeSetJson);
+        const updatedDoc = applyChangeSet(documentContent, changeSet);
+        console.log("ReceiveUpdate", updatedDoc , "changeSetJson: " , changeSetJson);
 
-            await newConnection.start();
-            await newConnection.invoke("JoinDocument", documentId);
-            await newConnection.invoke("SubscribeDocument", documentId);
+        setDocumentContent(updatedDoc);
+      });
 
-            setConnection(newConnection);
-        };
+      await newConnection.start();
+      await newConnection.invoke("JoinDocument", documentId);
+      await newConnection.invoke("SubscribeDocument", documentId);
 
-        connect();
-
-        return () => {
-            if (connection) {
-                connection.invoke("UnsubscribeDocument", documentId);
-                connection.stop();
-            }
-        };
-    }, [documentId]);
-
-    const applyChangeSet = (doc, changeSet) => {
-        return doc.substring(0, changeSet.Start) + changeSet.Text + doc.substring(changeSet.Start + changeSet.Length);
+      setConnection(newConnection);
     };
 
-    const handleEditorChange = (editor, data, value) => {
-        if (connection) {
-            const start = editor.indexFromPos(data.from);
-            const end = editor.indexFromPos(data.to);
-            const length = end - start;
-    
-            const changeSet = {
-                Start: start,
-                Length: length,
-                Text: data.text.join('\n')  // Tekst wstawiony/zmieniony
-            };
-    
-            connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
-        }
+    connect();
+
+    return () => {
+      if (connection) {
+        connection.invoke("UnsubscribeDocument", documentId);
+        connection.stop();
+      }
+    };
+  }, [documentId]);
+
+  const applyChangeSet = (doc, changeSet) => {
+
+
+const newChanges = (
+    doc.substring(0, changeSet.Start) +
+    changeSet.Text +
+    doc.substring(changeSet.Start + changeSet.Length)
+  )
+
+
+  console.log("applyChangeSet", doc, changeSet, newChanges);
+
+    return newChanges;
+  };
+
+  const handleEditorChange = (editor, data, value) => {
+    if (connection) {
+      const start = editor.indexFromPos(data.from);
+      const end = editor.indexFromPos(data.to);
+      const length = end - start;
+
+      const changeSet = {
+        Start: start,
+        Length: length,
+        Text: data.text.join("\n"), // Tekst wstawiony/zmieniony
+      };
+
+      connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
+    }
+
+    console.log("handleEditorChange", documentContent);
+    // setDocumentContent(documentContent);
+  };
+
+  return (
+    <CodeMirror
+      value={documentContent}
+      options={{
+        mode: "javascript",
+        lineNumbers: true,
+      }}
+      onBeforeChange={(editor, data, value) => {
         setDocumentContent(value);
-    };
-    
-    return (
-        <CodeMirror
-            value={documentContent}
-            options={{
-                mode: 'javascript',
-                lineNumbers: true
-            }}
-            onBeforeChange={(editor, data, value) => {
-                setDocumentContent(value);
-            }}
-            onChange={handleEditorChange}
-        />
-    );
+      }}
+      onChange={handleEditorChange}
+    />
+  );
 };
 
 export default CollaborativeEditor;
