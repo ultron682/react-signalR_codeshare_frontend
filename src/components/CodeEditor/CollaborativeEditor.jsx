@@ -96,6 +96,7 @@ const CollaborativeEditor = ({ documentId }) => {
     return newChanges;
   };
 
+  // only fully executed when current client makes a new change
   const handleEditorChange = (editor, data, value) => {
     //console.log("handleEditorChange", isServerChangeRef.current);
     if (isServerChangeRef.current === true) return;
@@ -112,10 +113,8 @@ const CollaborativeEditor = ({ documentId }) => {
       };
 
       connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
+      console.log("handleEditorChange", JSON.stringify(changeSet));
     }
-
-    console.log("handleEditorChange", documentContent.trim(0, 10));
-    // setDocumentContent(documentContent);
   };
 
   return (
