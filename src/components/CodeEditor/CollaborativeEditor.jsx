@@ -10,9 +10,24 @@ const CollaborativeEditor = ({ documentId }) => {
   const [documentContent, setDocumentContent] = useState("");
   const documentContentRef = useRef(documentContent);
   documentContentRef.current = documentContent;
-  
 
-  const [isLocalChanges, setIsLocalChanges] = useState(false);
+  const [isServerChange, setisServerChange] = useState(false);
+  const isServerChangeRef = useRef(isServerChange);
+  isServerChangeRef.current = isServerChange;
+
+  const editorRef = useRef(null);
+
+  const setValueWithoutTriggeringOnChange = (newValue) => {
+    console.log(3);
+    if (editorRef.current) {
+      //editorRef.current.editor.off("change");
+      console.log(4);
+      console.log(editorRef.current);
+      editorRef.current.editor.getDoc().setValue(newValue);
+      console.log(editorRef.current);
+      //editorRef.current.editor.on("change");
+    }
+  };
 
   useEffect(() => {
     const connect = async () => {
@@ -28,24 +43,28 @@ const CollaborativeEditor = ({ documentId }) => {
       });
 
       newConnection.on("ReceiveUpdate", (changeSetJson) => {
+        setisServerChange(true);
+        isServerChangeRef.current = true;
+
         const changeSet = JSON.parse(changeSetJson);
-        isLocalChanges.current = true;
+
         const updatedDoc = applyChangeSet(
           documentContentRef.current,
           changeSet
         );
 
         console.log(
-          "ReceiveUpdate",
+          "updatedDoc:",
           updatedDoc,
           "changeSetJson: ",
           changeSetJson
         );
 
-        setDocumentContent(updatedDoc);
         //documentContentRef.current = updatedDoc;
-        
-        isLocalChanges.current = false;
+        // setDocumentContent(updatedDoc);
+        setValueWithoutTriggeringOnChange(updatedDoc);
+        setisServerChange(false);
+        isServerChangeRef.current = false;
       });
 
       await newConnection.start();
@@ -54,8 +73,6 @@ const CollaborativeEditor = ({ documentId }) => {
 
       setConnection(newConnection);
     };
-
-
 
     connect();
 
@@ -67,10 +84,10 @@ const CollaborativeEditor = ({ documentId }) => {
     };
   }, [documentId]);
 
-
-  useEffect(() => {
-console.log("dupa", documentContent);
-  }, [isLocalChanges]);
+  //   useEffect(() => {
+  //     console.log("setDocumentContent", documentContentRef.current);
+  //     //setDocumentContent(documentContentRef.current);
+  //   }, [isServerChange]);
 
   const applyChangeSet = (doc, changeSet) => {
     const newChanges =
@@ -78,13 +95,13 @@ console.log("dupa", documentContent);
       changeSet.Text +
       doc.substring(changeSet.Start + changeSet.Length);
 
-    console.log("applyChangeSet", doc, changeSet, newChanges);
+    //console.log("applyChangeSet", doc, changeSet, newChanges);
 
     return newChanges;
   };
 
   const handleEditorChange = (editor, data, value) => {
-    if (isLocalChanges.current == true) return;
+    if (isServerChange === true) return;
 
     if (connection) {
       const start = editor.indexFromPos(data.from);
@@ -106,15 +123,20 @@ console.log("dupa", documentContent);
 
   return (
     <CodeMirror
+      ref={editorRef}
       value={documentContent}
       options={{
         mode: "javascript",
         lineNumbers: true,
       }}
       onBeforeChange={(editor, data, value) => {
+        console.log(1);
         setDocumentContent(value);
       }}
-      onChange={handleEditorChange}
+      onChange={(editor, data, value) => {
+        console.log(2);
+        handleEditorChange(editor, data, value);
+      }}
     />
   );
 };
