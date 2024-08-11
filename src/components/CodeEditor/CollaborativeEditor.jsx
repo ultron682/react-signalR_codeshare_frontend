@@ -86,11 +86,18 @@ const CollaborativeEditor = ({ documentId }) => {
   }, [documentContent]);
 
   const applyChangeSet = (doc, changeSet) => {
-    const newChanges =
-      doc.substring(0, changeSet.Start) +
-      changeSet.Text +
-      doc.substring(changeSet.Start + changeSet.Length);
+    let newChanges = undefined;
 
+    if (changeSet.Text === "") {
+      newChanges = doc.substring(0, changeSet.Start) +
+      changeSet.Text +
+      doc.substring(changeSet.Start + changeSet.Length);;
+    } else {
+      newChanges =
+        doc.substring(0, changeSet.Start) +
+        changeSet.Text +
+        doc.substring(changeSet.Start + changeSet.Length);
+    }
     //console.log("applyChangeSet", doc, changeSet, newChanges);
 
     return newChanges;
@@ -128,9 +135,6 @@ const CollaborativeEditor = ({ documentId }) => {
       onBeforeChange={(editor, data, value) => {
         console.log(1);
         setDocumentContent(value);
-      }}
-      onChange={(editor, data, value) => {
-        console.log(2);
         handleEditorChange(editor, data, value);
       }}
     />
