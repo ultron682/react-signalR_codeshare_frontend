@@ -182,7 +182,7 @@ const CodeEditor = () => {
         </div>
       )}
 
-     <CollaborativeEditor></CollaborativeEditor>
+     <CollaborativeEditor documentId={uniqueId}></CollaborativeEditor>
     </div>
   );
 };

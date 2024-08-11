@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useContext, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import CodeEditor from "./components/CodeEditor/CodeEditor";
 import Header from "./components/Header/Header";
@@ -18,16 +18,26 @@ import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 function App() {
   const { theme } = useTheme();
   const { token } = useContext(AuthContext);
+  const [isFooterHidden, setIsFooterHidden] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setIsFooterHidden(false);
+    } else {
+      setIsFooterHidden(true);
+    }
+  }, [location]);
+
   return (
     <div className="app-container">
       <Header />
 
-      <main>
+      <main className={ (isFooterHidden ? "footer__hidden" : "")}>
         <Routes>
           <Route path="/account/login" element={<LoginForm />} />
           <Route path="/account/register" element={<RegisterForm />} />
@@ -44,7 +54,7 @@ function App() {
         </Routes>
       </main>
 
-      <Footer />
+      <Footer isHidden={isFooterHidden} />
     </div>
   );
 }

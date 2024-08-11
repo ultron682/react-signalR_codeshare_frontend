@@ -20,20 +20,39 @@ const CollaborativeEditor = () => {
       .withAutomaticReconnect()
       .build();
 
-    setConnection(newConnection);
-
-    const startEditor = async () => {
-      const state = EditorState.create({
-        doc: Text.of(["Loading..."]),
-        extensions: [basicSetup, peerExtension(newConnection)],
+      newConnection.on("ReceiveDocument", (doc, changes) => {
+        setDocumentContent(doc);
       });
 
-      const newView = new EditorView({
-        state,
-        parent: editor.current,
+      newConnection.on("ReceiveUpdate", (changeSetJson) => {
+        isServerChangeRef.current = true;
+
+        const changeSet = JSON.parse(changeSetJson);
+
+        const updatedDoc = applyChangeSet(
+          documentContentRef.current,
+          changeSet
+        );
+
+        console.log(
+          "updatedDoc:",
+          updatedDoc,
+          "changeSetJson: ",
+          changeSetJson
+        );
+
+        //documentContentRef.current = updatedDoc;
+        console.log(3);
+        setDocumentContent(updatedDoc);
+
+        //setisServerChange(false);
       });
 
-      setView(newView);
+      await newConnection.start();
+      await newConnection.invoke("JoinDocument", documentId);
+      await newConnection.invoke("SubscribeDocument", documentId);
+
+      setConnection(newConnection);
     };
 
     startEditor();
