@@ -1,109 +1,144 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { EditorState, basicSetup } from '@codemirror/basic-setup';
-import { EditorView, ViewPlugin, ViewUpdate } from '@codemirror/view';
-import { Text } from '@codemirror/state';
-import { collab, receiveUpdates, sendableUpdates, getSyncedVersion } from '@codemirror/collab';
-import { ChangeSet } from '@codemirror/state';
-import * as signalR from '@microsoft/signalr';
+import React, { useState, useEffect, useRef } from "react";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { Controlled as CodeMirror } from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+import "codemirror/mode/javascript/javascript";
+import { use } from "i18next";
 
-const CollaborativeEditor = () => {
-  const editor = useRef(null);
-  const [view, setView] = useState(null);
+const CollaborativeEditor = ({ documentId }) => {
   const [connection, setConnection] = useState(null);
-  const docId = "default";
+  const [documentContent, setDocumentContent] = useState("");
+  const documentContentRef = useRef(documentContent);
+  documentContentRef.current = documentContent;
+
+  const isServerChangeRef = useRef(false);
+
+  const editorRef = useRef(null);
+
+  const setValueWithoutTriggeringOnChange = (newValue) => {
+    if (editorRef.current) {
+      //editorRef.current.editor.off("change");
+
+      //console.log(editorRef.current);
+      editorRef.current.editor.getDoc().setValue(newValue);
+      //console.log(editorRef.current);
+      //editorRef.current.editor.on("change");
+    }
+  };
 
   useEffect(() => {
-    const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5555/codesharehub", {
-        withCredentials: false,
-      })
-      .withAutomaticReconnect()
-      .build();
+    const connect = async () => {
+      const newConnection = new HubConnectionBuilder()
+        .withUrl("http://localhost:5555/codesharehub", {
+          withCredentials: false,
+        })
+        .withAutomaticReconnect()
+        .build();
 
-    setConnection(newConnection);
-
-    const startEditor = async () => {
-      const state = EditorState.create({
-        doc: Text.of(["Loading..."]),
-        extensions: [basicSetup, peerExtension(newConnection)],
+      newConnection.on("ReceiveDocument", (doc, changes) => {
+        setDocumentContent(doc);
       });
 
-      const newView = new EditorView({
-        state,
-        parent: editor.current,
+      newConnection.on("ReceiveUpdate", (changeSetJson) => {
+        isServerChangeRef.current = true;
+
+        const changeSet = JSON.parse(changeSetJson);
+
+        const updatedDoc = applyChangeSet(
+          documentContentRef.current,
+          changeSet
+        );
+
+        console.log(
+          "updatedDoc:",
+          updatedDoc,
+          "changeSetJson: ",
+          changeSetJson
+        );
+
+        //documentContentRef.current = updatedDoc;
+        console.log(3);
+        setDocumentContent(updatedDoc);
+        //setValueWithoutTriggeringOnChange(updatedDoc);
+
+        //setisServerChange(false);
       });
 
-      setView(newView);
+      await newConnection.start();
+      await newConnection.invoke("JoinDocument", documentId);
+      await newConnection.invoke("SubscribeDocument", documentId);
+
+      setConnection(newConnection);
     };
 
-    startEditor();
+    connect();
 
     return () => {
-      if (view) view.destroy();
+      if (connection) {
+        connection.invoke("UnsubscribeDocument", documentId);
+        connection.stop();
+      }
     };
-  }, []);
+  }, [documentId]);
 
   useEffect(() => {
+    isServerChangeRef.current = false;
+  }, [documentContent]);
+
+  const applyChangeSet = (doc, changeSet) => {
+    let newChanges = undefined;
+
+    if (changeSet.Text === "") {
+      newChanges = doc.substring(0, changeSet.Start) +
+      changeSet.Text +
+      doc.substring(changeSet.Start + changeSet.Length);;
+    } else {
+      newChanges =
+        doc.substring(0, changeSet.Start) +
+        changeSet.Text +
+        doc.substring(changeSet.Start + changeSet.Length);
+    }
+    //console.log("applyChangeSet", doc, changeSet, newChanges);
+
+    return newChanges;
+  };
+
+  // only fully executed when current client makes a new change
+  const handleEditorChange = (editor, data, value) => {
+    //console.log("handleEditorChange", isServerChangeRef.current);
+    if (isServerChangeRef.current === true) return;
+
     if (connection) {
-      connection.start()
-        .then(() => {
-          connection.on("ReceiveUpdate", (docId, clientId, changes) => {
-            if (view) {
-              const updates = [{ clientID: clientId, changes: ChangeSet.fromJSON(changes) }];
-              view.dispatch(receiveUpdates(view.state, updates));
-            }
-          });
+      const start = editor.indexFromPos(data.from);
+      const end = editor.indexFromPos(data.to);
+      const length = end - start;
 
-          connection.invoke("GetDocument", docId)
-            .then(doc => {
-              if (view) {
-                view.dispatch({
-                  changes: { from: 0, to: view.state.doc.length, insert: doc }
-                });
-              }
-            });
-        })
-        .catch(e => console.log('Connection failed: ', e));
+      const changeSet = {
+        Start: start,
+        Length: length,
+        Text: data.text.join("\n"), // Tekst wstawiony/zmieniony
+      };
+
+      connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
+      console.log("handleEditorChange", JSON.stringify(changeSet));
     }
-  }, [connection, view]);
+  };
 
-  return <div ref={editor}></div>;
-};
-
-function peerExtension(connection) {
-  return ViewPlugin.fromClass(
-    class {
-      constructor(view) {
-        this.view = view;
-        this.pushing = false;
-        this.done = false;
-        this.pull();
-      }
-
-      update(update) {
-        if (update.docChanged) this.push();
-      }
-
-      async push() {
-        const updates = sendableUpdates(this.view.state);
-        if (this.pushing || !updates.length) return;
-        this.pushing = true;
-        const version = getSyncedVersion(this.view.state);
-        const changes = updates.map(u => u.changes.toJSON());
-        await connection.invoke("SendUpdate", "default", "client1", changes);
-        this.pushing = false;
-        if (sendableUpdates(this.view.state).length) setTimeout(() => this.push(), 100);
-      }
-
-      async pull() {
-        // Not used with SignalR, as the server pushes updates
-      }
-
-      destroy() {
-        this.done = true;
-      }
-    }
+  return (
+    <CodeMirror
+      ref={editorRef}
+      value={documentContent}
+      options={{
+        mode: "javascript",
+        lineNumbers: true,
+      }}
+      onBeforeChange={(editor, data, value) => {
+        console.log(1);
+        setDocumentContent(value);
+        handleEditorChange(editor, data, value);
+      }}
+    />
   );
-}
+};
 
 export default CollaborativeEditor;
