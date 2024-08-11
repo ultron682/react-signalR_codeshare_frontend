@@ -58,7 +58,7 @@ const CollaborativeEditor = ({ documentId }) => {
             const changeSet = {
                 Start: start,
                 Length: length,
-                Text: value.substring(start, start + data.text.join('\n').length)
+                Text: data.text.join('\n')  // Tekst wstawiony/zmieniony
             };
     
             connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
