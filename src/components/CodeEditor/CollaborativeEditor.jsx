@@ -3,11 +3,16 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
+import { use } from "i18next";
 
 const CollaborativeEditor = ({ documentId }) => {
   const [connection, setConnection] = useState(null);
   const [documentContent, setDocumentContent] = useState("");
-  const editorRef = useRef(null);
+  const documentContentRef = useRef(documentContent);
+  documentContentRef.current = documentContent;
+  
+
+  const [isLocalChanges, setIsLocalChanges] = useState(false);
 
   useEffect(() => {
     const connect = async () => {
@@ -24,10 +29,23 @@ const CollaborativeEditor = ({ documentId }) => {
 
       newConnection.on("ReceiveUpdate", (changeSetJson) => {
         const changeSet = JSON.parse(changeSetJson);
-        const updatedDoc = applyChangeSet(documentContent, changeSet);
-        console.log("ReceiveUpdate", updatedDoc , "changeSetJson: " , changeSetJson);
+        isLocalChanges.current = true;
+        const updatedDoc = applyChangeSet(
+          documentContentRef.current,
+          changeSet
+        );
+
+        console.log(
+          "ReceiveUpdate",
+          updatedDoc,
+          "changeSetJson: ",
+          changeSetJson
+        );
 
         setDocumentContent(updatedDoc);
+        //documentContentRef.current = updatedDoc;
+        
+        isLocalChanges.current = false;
       });
 
       await newConnection.start();
@@ -36,6 +54,8 @@ const CollaborativeEditor = ({ documentId }) => {
 
       setConnection(newConnection);
     };
+
+
 
     connect();
 
@@ -47,22 +67,25 @@ const CollaborativeEditor = ({ documentId }) => {
     };
   }, [documentId]);
 
+
+  useEffect(() => {
+console.log("dupa", documentContent);
+  }, [isLocalChanges]);
+
   const applyChangeSet = (doc, changeSet) => {
+    const newChanges =
+      doc.substring(0, changeSet.Start) +
+      changeSet.Text +
+      doc.substring(changeSet.Start + changeSet.Length);
 
-
-const newChanges = (
-    doc.substring(0, changeSet.Start) +
-    changeSet.Text +
-    doc.substring(changeSet.Start + changeSet.Length)
-  )
-
-
-  console.log("applyChangeSet", doc, changeSet, newChanges);
+    console.log("applyChangeSet", doc, changeSet, newChanges);
 
     return newChanges;
   };
 
   const handleEditorChange = (editor, data, value) => {
+    if (isLocalChanges.current == true) return;
+
     if (connection) {
       const start = editor.indexFromPos(data.from);
       const end = editor.indexFromPos(data.to);
