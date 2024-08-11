@@ -11,20 +11,17 @@ const CollaborativeEditor = ({ documentId }) => {
   const documentContentRef = useRef(documentContent);
   documentContentRef.current = documentContent;
 
-  const [isServerChange, setisServerChange] = useState(false);
-  const isServerChangeRef = useRef(isServerChange);
-  isServerChangeRef.current = isServerChange;
+  const isServerChangeRef = useRef(false);
 
   const editorRef = useRef(null);
 
   const setValueWithoutTriggeringOnChange = (newValue) => {
-    console.log(3);
     if (editorRef.current) {
       //editorRef.current.editor.off("change");
-      console.log(4);
-      console.log(editorRef.current);
+
+      //console.log(editorRef.current);
       editorRef.current.editor.getDoc().setValue(newValue);
-      console.log(editorRef.current);
+      //console.log(editorRef.current);
       //editorRef.current.editor.on("change");
     }
   };
@@ -43,7 +40,6 @@ const CollaborativeEditor = ({ documentId }) => {
       });
 
       newConnection.on("ReceiveUpdate", (changeSetJson) => {
-        setisServerChange(true);
         isServerChangeRef.current = true;
 
         const changeSet = JSON.parse(changeSetJson);
@@ -61,10 +57,11 @@ const CollaborativeEditor = ({ documentId }) => {
         );
 
         //documentContentRef.current = updatedDoc;
-        // setDocumentContent(updatedDoc);
-        setValueWithoutTriggeringOnChange(updatedDoc);
-        setisServerChange(false);
-        isServerChangeRef.current = false;
+        console.log(3);
+        setDocumentContent(updatedDoc);
+        //setValueWithoutTriggeringOnChange(updatedDoc);
+
+        //setisServerChange(false);
       });
 
       await newConnection.start();
@@ -84,10 +81,9 @@ const CollaborativeEditor = ({ documentId }) => {
     };
   }, [documentId]);
 
-  //   useEffect(() => {
-  //     console.log("setDocumentContent", documentContentRef.current);
-  //     //setDocumentContent(documentContentRef.current);
-  //   }, [isServerChange]);
+  useEffect(() => {
+    isServerChangeRef.current = false;
+  }, [documentContent]);
 
   const applyChangeSet = (doc, changeSet) => {
     const newChanges =
@@ -101,7 +97,8 @@ const CollaborativeEditor = ({ documentId }) => {
   };
 
   const handleEditorChange = (editor, data, value) => {
-    if (isServerChange === true) return;
+    //console.log("handleEditorChange", isServerChangeRef.current);
+    if (isServerChangeRef.current === true) return;
 
     if (connection) {
       const start = editor.indexFromPos(data.from);
@@ -117,7 +114,7 @@ const CollaborativeEditor = ({ documentId }) => {
       connection.invoke("PushUpdate", documentId, JSON.stringify(changeSet));
     }
 
-    console.log("handleEditorChange", documentContent);
+    console.log("handleEditorChange", documentContent.trim(0, 10));
     // setDocumentContent(documentContent);
   };
 
