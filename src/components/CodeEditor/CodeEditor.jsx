@@ -4,22 +4,10 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import * as signalR from "@microsoft/signalr";
 
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material.css";
-import "codemirror/theme/material-darker.css";
-import "codemirror/mode/javascript/javascript.js";
-import "codemirror/mode/xml/xml.js";
-import "codemirror/mode/css/css.js";
-import "codemirror/mode/go/go.js";
-import "codemirror/mode/php/php.js";
-import "codemirror/mode/python/python.js";
-import "codemirror/mode/sql/sql.js";
-import "codemirror/mode/swift/swift.js";
-
 import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
-// import { AuthContext } from "../AuthContext";
-// import LoadingPopup from "../LoadingPopup";
+import { AuthContext } from "../AuthContext";
+import LoadingPopup from "../LoadingPopup";
 import CodeDownloader from "./CodeDownloader";
 import { BounceLoader } from "react-spinners";
 import CollaborativeEditor from "./CollaborativeEditor";
@@ -27,6 +15,7 @@ import CollaborativeEditor from "./CollaborativeEditor";
 const CodeEditor = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { user } = useContext(AuthContext);
 
   const [documentContent, setDocumentContent] = useState("");
   const documentContentRef = useRef(documentContent);
@@ -39,7 +28,7 @@ const CodeEditor = () => {
   const [uniqueId, setUniqueId] = useState("temp");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
-  const [isSaved, setIsSaved] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
   // const { user } = useContext(AuthContext);
 
   const { id } = useParams();
@@ -62,6 +51,10 @@ const CodeEditor = () => {
     } else {
     }
   }, [id, navigate]);
+
+  useEffect(() => {
+    isServerChangeRef.current = false;
+  }, [documentContent]);
 
   useEffect(() => {
     const connect = async () => {
@@ -88,8 +81,13 @@ const CodeEditor = () => {
         .then(() => {
           console.log("Connected!");
 
-          connection.on("ReceiveDocument", (doc, changes) => {
-            setDocumentContent(doc);
+          connection.on("ReceiveDocument", (codeSnippet) => {
+            console.log("ReceiveDocument", codeSnippet);
+            setIsSaved(true);
+            if (codeSnippet === null) return; // if nobody created doc yet then null is returned
+
+            setDocumentContent(codeSnippet.code);
+            setLanguageProg(codeSnippet.selectedLang);
           });
 
           connection.on("ReceiveUpdate", (changeSetJson) => {
@@ -109,13 +107,10 @@ const CodeEditor = () => {
               changeSetJson
             );
 
-            console.log(3);
-
             setDocumentContent(updatedDoc);
           });
 
-          connection.invoke("JoinDocument", uniqueId);
-          connection.invoke("SubscribeDocument", uniqueId);
+          connection.invoke("JoinToDocument", uniqueId);
 
           setConnection(connection);
         })
@@ -136,7 +131,6 @@ const CodeEditor = () => {
 
       connection.onreconnecting(() => {
         console.log("Connection lost, reconnecting.");
-        
         setIsConnected(false);
       });
     }
@@ -145,8 +139,6 @@ const CodeEditor = () => {
         console.log("Connection closed ReceivedNewLineCode.");
         connection.off("ReceiveUpdate");
         connection.off("ReceiveDocument");
-        connection.invoke("UnsubscribeDocument", uniqueId);
-        
       }
     };
   }, [connection, uniqueId]);
@@ -156,19 +148,11 @@ const CodeEditor = () => {
   };
 
   const applyChangeSet = (doc, changeSet) => {
-    let newChanges = undefined;
+    let newChanges =
+      doc.substring(0, changeSet.Start) +
+      changeSet.Text +
+      doc.substring(changeSet.Start + changeSet.Length);
 
-    if (changeSet.Text === "") {
-      newChanges =
-        doc.substring(0, changeSet.Start) +
-        changeSet.Text +
-        doc.substring(changeSet.Start + changeSet.Length);
-    } else {
-      newChanges =
-        doc.substring(0, changeSet.Start) +
-        changeSet.Text +
-        doc.substring(changeSet.Start + changeSet.Length);
-    }
     //console.log("applyChangeSet", doc, changeSet, newChanges);
 
     return newChanges;
@@ -178,6 +162,7 @@ const CodeEditor = () => {
     //console.log("handleEditorChange", isServerChangeRef.current);
     if (isServerChangeRef.current === true) return;
 
+    setIsSaved(false);
     if (connection) {
       const start = editor.indexFromPos(data.from);
       const end = editor.indexFromPos(data.to);
@@ -189,8 +174,13 @@ const CodeEditor = () => {
         Text: data.text.join("\n"),
       };
 
-      connection.invoke("PushUpdate", uniqueId, JSON.stringify(changeSet));
+      connection.invoke(
+        "PushUpdate",
+        JSON.stringify(changeSet),
+        user !== null ? user.id : ""
+      );
       console.log("handleEditorChange", JSON.stringify(changeSet));
+      setIsSaved(true);
     }
   };
 

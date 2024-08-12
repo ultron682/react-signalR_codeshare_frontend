@@ -1,7 +1,17 @@
 import React, { useRef } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
+
 import "codemirror/lib/codemirror.css";
-import "codemirror/mode/javascript/javascript";
+import "codemirror/theme/material.css";
+import "codemirror/theme/material-darker.css";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/xml/xml.js";
+import "codemirror/mode/css/css.js";
+import "codemirror/mode/go/go.js";
+import "codemirror/mode/php/php.js";
+import "codemirror/mode/python/python.js";
+import "codemirror/mode/sql/sql.js";
+import "codemirror/mode/swift/swift.js";
 
 const CollaborativeEditor = ({
   documentContent,
@@ -9,7 +19,7 @@ const CollaborativeEditor = ({
   languageProg,
   theme,
   onHandleEditorChange,
-  isConnected
+  isConnected,
 }) => {
   const editorRef = useRef(null);
 
@@ -22,10 +32,9 @@ const CollaborativeEditor = ({
         theme: theme === "light" ? "material" : "material-darker",
         lineNumbers: true,
         lineWrapping: true,
-         readOnly: !isConnected ? "nocursor" : false,
+        readOnly: !isConnected ? "nocursor" : false
       }}
       onBeforeChange={(editor, data, value) => {
-        console.log(1);
         setDocumentContent(value);
         onHandleEditorChange(editor, data, value);
       }}
