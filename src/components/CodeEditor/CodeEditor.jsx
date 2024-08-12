@@ -7,7 +7,7 @@ import * as signalR from "@microsoft/signalr";
 import { useTheme } from "../ThemeContext";
 import "./CodeEditor.css";
 import { AuthContext } from "../AuthContext";
-import LoadingPopup from "../LoadingPopup";
+// import LoadingPopup from "../LoadingPopup";
 import CodeDownloader from "./CodeDownloader";
 import { BounceLoader } from "react-spinners";
 import CollaborativeEditor from "./CollaborativeEditor";
