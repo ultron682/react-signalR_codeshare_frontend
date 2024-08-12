@@ -2,8 +2,7 @@ import React, {
   useState,
   useEffect,
   useContext,
-  useRef,
-  useCallback,
+  useRef
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
@@ -38,16 +37,12 @@ const CodeEditor = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const clientId = useRef(`client_${Math.random().toString(36).substr(2, 9)}`);
-  const version = useRef(0);
-  const editorRef = useRef();
-
   const [codeContent, setCodeContent] = useState("");
 
   const [connection, setConnection] = useState(null);
   const connectionRef = useRef(null);
 
-  const [uniqueId, setUniqueId] = useState("");
+  const [uniqueId, setUniqueId] = useState("temp");
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
   const [isSaved, setIsSaved] = useState(true);
@@ -182,7 +177,7 @@ const CodeEditor = () => {
         </div>
       )}
 
-     <CollaborativeEditor documentId="dupa"></CollaborativeEditor>
+     <CollaborativeEditor languageProg={languageProg} documentId={uniqueId} theme={theme}></CollaborativeEditor>
     </div>
   );
 };
