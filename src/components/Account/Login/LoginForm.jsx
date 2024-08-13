@@ -14,10 +14,11 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5555/login", {
+      const response = await axios.post("http://localhost:5555/account/login", {
         email,
         password,
       });
+      console.log(response.data);
       // Obsługa pomyślnego logowania
       login(response.data.accessToken);
       console.log("Login successful:", response.data.accessToken);
