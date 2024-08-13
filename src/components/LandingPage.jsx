@@ -29,6 +29,7 @@ const LandingPage = () => {
     >
       <h1>{t("welcomeTo")}</h1>
       <p>{t("yourJourney")}</p>
+      <p className={styles.title}>{t("footer")}</p>
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>
           {t("startHere")}

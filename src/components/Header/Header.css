@@ -44,6 +44,7 @@
 
 .theme-toggle-btn, .language-toggle-btn {
     background: none;
+    padding: 0;
     border: none;
     color: white;
     cursor: pointer;

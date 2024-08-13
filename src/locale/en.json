@@ -11,6 +11,8 @@
     "welcomeTo": "Welcome to CodeShare",
     "yourJourney": "Your journey with Awesome Code experiences starts here.",
     "footer": "CodeShare - a platform on which you can share and work simultaneously with others on code.",
-    "contact": "Contact"
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
   }
 }
