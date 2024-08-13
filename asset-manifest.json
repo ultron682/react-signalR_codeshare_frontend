@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/codeshare-frontend/static/css/main.e0021318.css",
-    "main.js": "/codeshare-frontend/static/js/main.f15039a5.js",
+    "main.css": "/codeshare-frontend/static/css/main.4601dd26.css",
+    "main.js": "/codeshare-frontend/static/js/main.cc846216.js",
     "static/js/453.0fb2dd27.chunk.js": "/codeshare-frontend/static/js/453.0fb2dd27.chunk.js",
     "index.html": "/codeshare-frontend/index.html",
-    "main.e0021318.css.map": "/codeshare-frontend/static/css/main.e0021318.css.map",
-    "main.f15039a5.js.map": "/codeshare-frontend/static/js/main.f15039a5.js.map",
+    "main.4601dd26.css.map": "/codeshare-frontend/static/css/main.4601dd26.css.map",
+    "main.cc846216.js.map": "/codeshare-frontend/static/js/main.cc846216.js.map",
     "453.0fb2dd27.chunk.js.map": "/codeshare-frontend/static/js/453.0fb2dd27.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e0021318.css",
-    "static/js/main.f15039a5.js"
+    "static/css/main.4601dd26.css",
+    "static/js/main.cc846216.js"
   ]
 }
