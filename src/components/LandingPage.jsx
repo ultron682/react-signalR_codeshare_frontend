@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import styles from "./LandingPage.module.css";
-import { useTheme } from "./ThemeContext";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "./AuthContext";
 
 const LandingPage = () => {
   const [uniqueId, setUniqueId] = useState("");
-  const { theme } = useTheme();
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
 
