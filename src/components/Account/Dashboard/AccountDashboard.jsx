@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthContext";
 import { Link } from "react-router-dom";
@@ -6,9 +6,10 @@ import { useLocation } from "react-router-dom";
 import './AccountDashboard.css'; // Dodajemy osobny plik CSS
 
 const AccountDashboard = () => {
-  const { user, logout, deleteSnippet, fetchAccountInfo } =
+  const { user, logout, deleteSnippet, fetchAccountInfo, resendConfirmationEmail } =
     useContext(AuthContext);
   const location = useLocation();
+  const [emailResent, setEmailResent] = useState(false);
 
   useEffect(() => {
     if (user !== null) fetchAccountInfo(); // refresh
@@ -29,17 +30,41 @@ const AccountDashboard = () => {
     }
   };
 
+  const handleResendEmail = async () => {
+    try {
+      await resendConfirmationEmail();
+      setEmailResent(true);
+    } catch (error) {
+      console.error("Error resending confirmation email:", error);
+    }
+  };
+
   return (
     <>
       {user && (
         <div className="dashboard-container">
           <h1 className="welcome-header">
-            Witaj, {user.username || "Użytkowniku"}!
+            Witaj, {user.userName || "Użytkowniku"}!
           </h1>
           <p className="email-status">
             Email: {user.email} potwierdzony:{" "}
             {user.isEmailConfirmed ? "tak" : "nie"}
           </p>
+
+          {!user.isEmailConfirmed && (
+            <div className="email-confirmation-box">
+              <p>Twój adres e-mail nie został potwierdzony.</p>
+              <p>Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.</p>
+              {emailResent ? (
+                <p className="email-resent-message">Email został ponownie wysłany!</p>
+              ) : (
+                <button className="resend-email-button" onClick={handleResendEmail}>
+                  Wyślij ponownie e-mail potwierdzający
+                </button>
+              )}
+            </div>
+          )}
+
           <button className="logout-button" onClick={logoutHandler}>
             Wyloguj się
           </button>
