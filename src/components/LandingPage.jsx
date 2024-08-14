@@ -23,18 +23,17 @@ const LandingPage = () => {
 
   return (
     <div
-      className={`${styles.landing_container} ${
-        theme === "light" ? styles.light_theme : styles.dark_theme
-      }`}
+      className={`${styles.landing_container}`}
     >
       <h1>{t("welcomeTo")}</h1>
       <p>{t("yourJourney")}</p>
-      <p className={styles.title}>{t("footer")}</p>
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>
           {t("startHere")}
         </Link>
       </div>
+      <p className={styles.title}>{t("desccodeshare")}</p>
+      
       {user == null &&
       (
         <div className={styles.button_group}>

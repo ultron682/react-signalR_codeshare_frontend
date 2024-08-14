@@ -12,3 +12,13 @@ main {
 .footer__hidden {
     height: calc(100% - (50px));
 }
+
+
+.light_theme {
+    background-color: #7496a6;
+  }
+  
+  .dark_theme {
+    background-color: #252525;
+  }
+  

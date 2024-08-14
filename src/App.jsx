@@ -37,7 +37,9 @@ function App() {
     <div className="app-container">
       <Header />
 
-      <main className={ (isFooterHidden ? "footer__hidden" : "")}>
+      <main className={[ (isFooterHidden ? "footer__hidden" : ""),  
+        (theme === "light" ? "light_theme" : "dark_theme")
+      ].join(' ')}>
         <Routes>
           <Route path="/account/login" element={<LoginForm />} />
           <Route path="/account/register" element={<RegisterForm />} />

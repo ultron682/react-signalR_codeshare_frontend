@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import "../Form.css";
 import { AuthContext } from "../../AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -55,7 +55,11 @@ const LoginForm = () => {
           Login
         </button>
       </form>
-      {/* <p className="toggle-text">Don't have an account? <span>Register here</span></p> */}
+      <p className="toggle-text">
+        <Link to="/account/register" className="account-link">
+          Don't have an account? <span>Register here</span>
+        </Link>
+      </p>
     </div>
   );
 };
