@@ -44,6 +44,42 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const changeNickname = async (newNickname) => {
+    try {
+      await axios.put(
+        "http://localhost:5555/account/nickname",
+        { nickname: newNickname },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchAccountInfo();
+    } catch (error) {
+      console.error("Błąd podczas zmiany pseudonimu:", error);
+    }
+  };
+
+  const resendConfirmationEmail = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5555/account/resend-confirmation-email",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error(
+        "Błąd podczas ponownego wysyłania emaila potwierdzającego:",
+        error
+      );
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchAccountInfo();
@@ -69,6 +105,7 @@ const AuthProvider = ({ children }) => {
         logout,
         deleteSnippet,
         fetchAccountInfo,
+        changeNickname,
       }}
     >
       {children}
