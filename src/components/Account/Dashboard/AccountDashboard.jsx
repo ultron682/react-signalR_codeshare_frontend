@@ -3,13 +3,20 @@ import { useContext } from "react";
 import { AuthContext } from "../../AuthContext";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import './AccountDashboard.css'; // Dodajemy osobny plik CSS
+import "./AccountDashboard.css"; // Dodajemy osobny plik CSS
 
 const AccountDashboard = () => {
-  const { user, logout, deleteSnippet, fetchAccountInfo, resendConfirmationEmail } =
-    useContext(AuthContext);
+  const {
+    user,
+    logout,
+    deleteSnippet,
+    fetchAccountInfo,
+    resendConfirmationEmail,
+    changeNickname,
+  } = useContext(AuthContext);
   const location = useLocation();
   const [emailResent, setEmailResent] = useState(false);
+  const [newNickname, setNewNickname] = useState("");
 
   useEffect(() => {
     if (user !== null) fetchAccountInfo(); // refresh
@@ -39,6 +46,11 @@ const AccountDashboard = () => {
     }
   };
 
+  const handleNicknameChange = (e) => {
+    e.preventDefault();
+    changeNickname(newNickname);
+  };
+
   return (
     <>
       {user && (
@@ -54,11 +66,18 @@ const AccountDashboard = () => {
           {!user.emailConfirmed && (
             <div className="email-confirmation-box">
               <p>Twój adres e-mail nie został potwierdzony.</p>
-              <p>Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.</p>
+              <p>
+                Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.
+              </p>
               {emailResent ? (
-                <p className="email-resent-message">Email został ponownie wysłany!</p>
+                <p className="email-resent-message">
+                  Email został ponownie wysłany!
+                </p>
               ) : (
-                <button className="resend-email-button" onClick={handleResendEmail}>
+                <button
+                  className="resend-email-button"
+                  onClick={handleResendEmail}
+                >
                   Wyślij ponownie e-mail potwierdzający
                 </button>
               )}
@@ -75,7 +94,9 @@ const AccountDashboard = () => {
               style={{ width: `${(user.codeSnippets.length / 10) * 100}%` }}
             ></div>
           </div>
-          <h3>W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów</h3>
+          <h3>
+            W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów
+          </h3>
           {user && (
             <ul className="code-list">
               {user.codeSnippets.length > 0 ? (
@@ -98,6 +119,17 @@ const AccountDashboard = () => {
               )}
             </ul>
           )}
+
+          <form onSubmit={handleNicknameChange}>
+            <label htmlFor="nickname">Nowy pseudonim:</label>
+            <input
+              type="text"
+              id="nickname"
+              value={newNickname}
+              onChange={(e) => setNewNickname(e.target.value)}
+            />
+            <button type="submit">Zmień pseudonim</button>
+          </form>
         </div>
       )}
     </>

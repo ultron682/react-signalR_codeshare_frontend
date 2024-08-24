@@ -46,12 +46,14 @@ const AuthProvider = ({ children }) => {
 
   const changeNickname = async (newNickname) => {
     try {
-      await axios.put(
+      await axios.patch(
         "http://localhost:5555/account/nickname",
-        { nickname: newNickname },
+        { newUsername: newNickname },
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/x-www-form-urlencoded'
           },
         }
       );
@@ -106,6 +108,7 @@ const AuthProvider = ({ children }) => {
         deleteSnippet,
         fetchAccountInfo,
         changeNickname,
+        resendConfirmationEmail,
       }}
     >
       {children}
