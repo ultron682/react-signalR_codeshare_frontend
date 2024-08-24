@@ -13,6 +13,8 @@
     "desccodeshare": "CodeShare - platforma na której możesz udostępnić i pracować równocześnie z innymi nad kodem.",
     "contact": "Kontakt",
     "privacyPolicy": "Polityka prywatności",
-    "termsOfService": "Warunki świadczenia usług"
+    "termsOfService": "Warunki świadczenia usług",
+    "emailConfirmedTitle": "Email potwierdzony",
+    "emailConfirmedMessage": "Twój email został pomyślnie potwierdzony. Możesz teraz się zalogować."
   }
 }

@@ -14,6 +14,7 @@ import { useTheme } from "./components/ThemeContext";
 import "./i18n.js";
 import "./App.css";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
+import ConfirmedEmail from "./components/Account/ConfirmedEmail/ConfirmedEmail.jsx";
 
 function App() {
   const { theme } = useTheme();
@@ -43,6 +44,7 @@ function App() {
         <Routes>
           <Route path="/account/login" element={<LoginForm />} />
           <Route path="/account/register" element={<RegisterForm />} />
+          <Route path="/account/confirmedEmail" element={<ConfirmedEmail />} />
           <Route
             path="/account"
             element={

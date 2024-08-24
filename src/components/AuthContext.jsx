@@ -68,7 +68,7 @@ const AuthProvider = ({ children }) => {
   const resendConfirmationEmail = async () => {
     try {
       await axios.post(
-        "http://localhost:5555/account/resend-confirmation-email",
+        "http://localhost:5555/account/send-confirmation-email",
         {},
         {
           headers: {

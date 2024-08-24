@@ -26,7 +26,12 @@ const LoginForm = () => {
     } catch (error) {
       // Obsługa błędu logowania
       console.error("Error logging in:", error);
-      setError("Invalid email or password");
+
+      if (error.response.status === 470) {
+        setError("Please confirm your email address");
+      } else {
+        setError("Invalid email or password");
+      }
     }
   };
 

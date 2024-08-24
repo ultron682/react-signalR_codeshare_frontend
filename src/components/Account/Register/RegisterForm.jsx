@@ -23,12 +23,24 @@ const RegisterForm = () => {
       );
       // Obsługa pomyślnej rejestracji
       console.log("Registration successful:", response.data);
-      setSuccess("Registration successful. You can now log in.");
+      setSuccess("Registration successful. Please check your email to confirm.");
       setError("");
     } catch (error) {
       // Obsługa błędu rejestracji
       console.error("Error registering:", error);
-      setError("Registration failed. Please try again.");
+
+      if (error.response.status === 450) {
+        setError("Username already taken");
+      } 
+      else if (error.response.status === 452) {
+        setError("Email already taken");
+      }
+      else {
+        setError("Registration failed. Please try again.");
+      }
+
+
+      
       setSuccess("");
     }
   };
