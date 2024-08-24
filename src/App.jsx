@@ -7,7 +7,7 @@ import Footer from "./components/Footer/Footer";
 import LoginForm from "./components/Account/Login/LoginForm.jsx";
 import RegisterForm from "./components/Account/Register/RegisterForm.jsx";
 import AccountDashboard from "./components/Account/Dashboard/AccountDashboard.jsx";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/LandingPage/LandingPage.jsx";
 import { AuthContext } from "./components/AuthContext";
 
 import { useTheme } from "./components/ThemeContext";

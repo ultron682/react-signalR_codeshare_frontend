@@ -49,6 +49,7 @@ const AccountDashboard = () => {
   const handleNicknameChange = (e) => {
     e.preventDefault();
     changeNickname(newNickname);
+    setNewNickname("")
   };
 
   return (

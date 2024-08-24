@@ -15,6 +15,8 @@ const AuthProvider = ({ children }) => {
 
   const fetchAccountInfo = useCallback(async () => {
     try {
+      if (token === "") return;
+
       const response = await axios.get("http://localhost:5555/account", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,8 +54,8 @@ const AuthProvider = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/x-www-form-urlencoded'
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/x-www-form-urlencoded",
           },
         }
       );
