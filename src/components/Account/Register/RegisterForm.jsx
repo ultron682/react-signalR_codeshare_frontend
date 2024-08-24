@@ -35,6 +35,25 @@ const RegisterForm = () => {
       else if (error.response.status === 452) {
         setError("Email already taken");
       }
+      else if(error.response.status === 454) { // weak password
+        if(error.response.data === "PasswordTooShort") {
+          setError("Password is too short. Minimum 6 characters required.");
+        }
+        else if(error.response.data === "PasswordRequiresNonAlphanumeric") {
+          setError("Password must have at least one non-alphanumeric character.");
+        }
+        else if(error.response.data === "PasswordRequiresDigit") {
+          setError("Password must have at least one digit ('0'-'9').");
+        }
+        else if(error.response.data === "PasswordRequiresLower") {
+          setError("Password must have at least one lowercase ('a'-'z').");
+        }
+        else if(error.response.data === "PasswordRequiresUpper") {
+          setError("Password must have at least one uppercase ('A'-'Z').");
+        }
+        
+
+      }
       else {
         setError("Registration failed. Please try again.");
       }
