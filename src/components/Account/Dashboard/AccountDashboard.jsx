@@ -48,10 +48,10 @@ const AccountDashboard = () => {
           </h1>
           <p className="email-status">
             Email: {user.email} potwierdzony:{" "}
-            {user.isEmailConfirmed ? "tak" : "nie"}
+            {user.emailConfirmed ? "tak" : "nie"}
           </p>
 
-          {!user.isEmailConfirmed && (
+          {!user.emailConfirmed && (
             <div className="email-confirmation-box">
               <p>Twój adres e-mail nie został potwierdzony.</p>
               <p>Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.</p>
