@@ -120,7 +120,7 @@ const AccountDashboard = () => {
             </ul>
           )}
 
-          <form onSubmit={handleNicknameChange}>
+          <form className="nickname-form" onSubmit={handleNicknameChange}>
             <label htmlFor="nickname">Nowy pseudonim:</label>
             <input
               type="text"
