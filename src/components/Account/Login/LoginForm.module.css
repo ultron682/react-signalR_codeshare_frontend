@@ -1,0 +1,31 @@
+.email-status {
+    margin-bottom: 20px;
+}
+
+.email-confirmation-box {
+    background: #ffcccb;
+    color: #333;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+.resend-email-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.resend-email-button:hover {
+    background-color: #d32f2f;
+}
+
+.email-resent-message {
+    color: green;
+    font-weight: bold;
+}

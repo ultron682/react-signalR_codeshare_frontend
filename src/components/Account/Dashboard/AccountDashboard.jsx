@@ -11,11 +11,9 @@ const AccountDashboard = () => {
     logout,
     deleteSnippet,
     fetchAccountInfo,
-    resendConfirmationEmail,
     changeNickname,
   } = useContext(AuthContext);
   const location = useLocation();
-  const [emailResent, setEmailResent] = useState(false);
   const [newNickname, setNewNickname] = useState("");
 
   useEffect(() => {
@@ -37,14 +35,7 @@ const AccountDashboard = () => {
     }
   };
 
-  const handleResendEmail = async () => {
-    try {
-      await resendConfirmationEmail();
-      setEmailResent(true);
-    } catch (error) {
-      console.error("Error resending confirmation email:", error);
-    }
-  };
+
 
   const handleNicknameChange = (e) => {
     e.preventDefault();
@@ -59,31 +50,10 @@ const AccountDashboard = () => {
           <h1 className="welcome-header">
             Witaj, {user.userName || "Użytkowniku"}!
           </h1>
-          <p className="email-status">
+          {/* <p className="email-status">
             Email: {user.email} potwierdzony:{" "}
             {user.emailConfirmed ? "tak" : "nie"}
-          </p>
-
-          {!user.emailConfirmed && (
-            <div className="email-confirmation-box">
-              <p>Twój adres e-mail nie został potwierdzony.</p>
-              <p>
-                Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.
-              </p>
-              {emailResent ? (
-                <p className="email-resent-message">
-                  Email został ponownie wysłany!
-                </p>
-              ) : (
-                <button
-                  className="resend-email-button"
-                  onClick={handleResendEmail}
-                >
-                  Wyślij ponownie e-mail potwierdzający
-                </button>
-              )}
-            </div>
-          )}
+          </p> */}
 
           <button className="logout-button" onClick={logoutHandler}>
             Wyloguj się

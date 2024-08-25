@@ -40,6 +40,9 @@
     color: #fff;
     font-size: 1rem;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .submit-btn:hover {

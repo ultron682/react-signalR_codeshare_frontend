@@ -1,18 +1,24 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import "../Form.css";
+import "./LoginForm.module.css";
 import { AuthContext } from "../../AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, resendConfirmationEmail } = useContext(AuthContext);
+  const [emailResent, setEmailResent] = useState(false);
+  const [emailConfirmed, setEmailConfirmed] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await axios.post("http://localhost:5555/account/login", {
         email,
@@ -29,9 +35,22 @@ const LoginForm = () => {
 
       if (error.response.status === 470) {
         setError("Please confirm your email address");
+        setEmailConfirmed(false);
       } else {
         setError("Invalid email or password");
       }
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleResendEmail = async (e) => {
+    e.preventDefault();
+    try {
+      await resendConfirmationEmail(email);
+      setEmailResent(true);
+    } catch (error) {
+      console.error("Error resending confirmation email:", error);
     }
   };
 
@@ -56,8 +75,30 @@ const LoginForm = () => {
           />
         </div>
         {error && <p className="error-text">{error}</p>}
+
+        {!emailConfirmed && (
+          <div className="email-confirmation-box">
+            <p>Twój adres e-mail nie został potwierdzony.</p>
+            <p>
+              Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.
+            </p>
+            {emailResent ? (
+              <p className="email-resent-message">
+                Email został ponownie wysłany!
+              </p>
+            ) : (
+              <button
+                className="resend-email-button"
+                onClick={handleResendEmail}
+              >
+                Wyślij ponownie e-mail potwierdzający
+              </button>
+            )}
+          </div>
+        )}
+
         <button type="submit" className="submit-btn">
-          Login
+          Login {<BounceLoader loading={isLoading} size="20px" color="white" />}
         </button>
       </form>
       <p className="toggle-text">

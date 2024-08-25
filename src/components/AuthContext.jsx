@@ -55,7 +55,7 @@ const AuthProvider = ({ children }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/x-www-form-urlencoded",
-            Accept: "application/x-www-form-urlencoded",
+            "Accept": "application/x-www-form-urlencoded",
           },
         }
       );
@@ -65,14 +65,15 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const resendConfirmationEmail = async () => {
+  const resendConfirmationEmail = async (email) => {
     try {
       await axios.post(
         "http://localhost:5555/account/send-confirmation-email",
-        {},
+        { email },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/x-www-form-urlencoded",
           },
         }
       );
