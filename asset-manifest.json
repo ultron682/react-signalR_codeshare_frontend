@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/react-signalR_codeshare_frontend/static/css/main.1d112598.css",
-    "main.js": "/react-signalR_codeshare_frontend/static/js/main.6d754c55.js",
+    "main.css": "/react-signalR_codeshare_frontend/static/css/main.d63e21cf.css",
+    "main.js": "/react-signalR_codeshare_frontend/static/js/main.769b213a.js",
     "static/js/453.0fb2dd27.chunk.js": "/react-signalR_codeshare_frontend/static/js/453.0fb2dd27.chunk.js",
     "index.html": "/react-signalR_codeshare_frontend/index.html",
-    "main.1d112598.css.map": "/react-signalR_codeshare_frontend/static/css/main.1d112598.css.map",
-    "main.6d754c55.js.map": "/react-signalR_codeshare_frontend/static/js/main.6d754c55.js.map",
+    "main.d63e21cf.css.map": "/react-signalR_codeshare_frontend/static/css/main.d63e21cf.css.map",
+    "main.769b213a.js.map": "/react-signalR_codeshare_frontend/static/js/main.769b213a.js.map",
     "453.0fb2dd27.chunk.js.map": "/react-signalR_codeshare_frontend/static/js/453.0fb2dd27.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1d112598.css",
-    "static/js/main.6d754c55.js"
+    "static/css/main.d63e21cf.css",
+    "static/js/main.769b213a.js"
   ]
 }
