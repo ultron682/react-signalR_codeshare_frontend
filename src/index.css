@@ -34,6 +34,10 @@ body[data-theme="dark"] {
   height: 100%;
 }
 
+input{
+  box-sizing: border-box;
+}
+
 /* fix for strict mode */
 /* .react-codemirror2 > .CodeMirror:first-child {
   display: none;

@@ -51,8 +51,6 @@ const RegisterForm = () => {
         else if(error.response.data === "PasswordRequiresUpper") {
           setError("Password must have at least one uppercase ('A'-'Z').");
         }
-        
-
       }
       else {
         setError("Registration failed. Please try again.");
