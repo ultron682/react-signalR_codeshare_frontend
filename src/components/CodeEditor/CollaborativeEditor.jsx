@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
 import "codemirror/lib/codemirror.css";
@@ -13,11 +13,6 @@ import "codemirror/mode/python/python.js";
 import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/swift/swift.js";
 
-import { basicSetup } from "@codemirror/basic-setup";
-import { EditorState } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
-import { javascript } from "@codemirror/lang-javascript";
-
 const CollaborativeEditor = ({
   documentContent,
   setDocumentContent,
@@ -26,24 +21,25 @@ const CollaborativeEditor = ({
   onHandleEditorChange,
   isConnected,
 }) => {
-  const editor = useRef();
+  const editorRef = useRef(null);
 
-  useEffect(() => {
-    const log = (event) => console.log(event);
-    // editor.current.addEventListener("input", log);
-
-    const state = EditorState.create({
-      doc: "a ",
-      extensions: [basicSetup, javascript()],
-    });
-    const view = new EditorView({ state, parent: editor.current });
-    return () => {
-      view.destroy();
-      // editor.current.removeEventListener("input", log);
-    };
-  }, []);
-
-  return <div ref={editor}></div>;
+  return (
+    <CodeMirror
+      ref={editorRef}
+      value={documentContent}
+      options={{
+        mode: languageProg,
+        theme: theme === "light" ? "material" : "material-darker",
+        lineNumbers: true,
+        lineWrapping: true,
+        readOnly: !isConnected ? "nocursor" : false
+      }}
+      onBeforeChange={(editor, data, value) => {
+        setDocumentContent(value);
+        onHandleEditorChange(editor, data, value);
+      }}
+    />
+  );
 };
 
 export default CollaborativeEditor;
