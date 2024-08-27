@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { xml } from "@codemirror/lang-xml";
@@ -27,14 +27,17 @@ const CollaborativeEditor = ({
   onHandleEditorChange,
   isConnected,
 }) => {
+  const editorRef = useRef(null);
+
   const handleEditorChange = (value, viewUpdate) => {
     setDocumentContent(value);
-    console.log("handleEditorChange", viewUpdate);
-    onHandleEditorChange(value, viewUpdate);
+    //console.log("handleEditorChange", viewUpdate);
+    onHandleEditorChange(value, viewUpdate, editorRef);
   };
 
   return (
     <CodeMirror
+      ref={editorRef}
       value={documentContent}
       height="100%"
       // theme={theme === "light" ? draculaDarkStyle : dracula} // Możesz zmienić na inne dostępne tematy

@@ -159,20 +159,23 @@ const CodeEditor = () => {
     return newChanges;
   };
 
-  const handleEditorChange = (editor, data, value) => {
+  const handleEditorChange = (value, viewUpdate, editorRef) => {
     //console.log("handleEditorChange", isServerChangeRef.current);
     if (isServerChangeRef.current === true) return;
 
     setIsSaved(false);
     if (connection) {
-      const start = editor.indexFromPos(data.from);
-      const end = editor.indexFromPos(data.to);
-      const length = end - start;
+      console.log(viewUpdate)
+      const text = viewUpdate.changes.inserted[viewUpdate.changes.inserted.length == 1 ? 0 : 1].text[0];
+      console.log(text);
+       const start = viewUpdate.changedRanges[0].fromA;
+       const end = viewUpdate.changedRanges[0].toB;
+       const length = end - start;
 
       const changeSet = {
         Start: start,
         Length: length,
-        Text: data.text.join("\n"),
+        Text: text,
       };
 
       connection.invoke(
