@@ -29,7 +29,7 @@ const CodeEditor = () => {
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
-  // const { user } = useContext(AuthContext);
+  const [ownerNickname, setOwnerNickname] = useState(null);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,6 +88,7 @@ const CodeEditor = () => {
 
             setDocumentContent(codeSnippet.code);
             setLanguageProg(codeSnippet.selectedLang);
+            setOwnerNickname(codeSnippet.ownerNickname);
           });
 
           connection.on("ReceiveUpdate", (changeSetJson) => {
@@ -209,6 +210,11 @@ const CodeEditor = () => {
           data={documentContent}
         ></CodeDownloader>
 
+        {ownerNickname && (
+          <p>
+            {t("owner")} {ownerNickname}
+          </p>
+        )}
         {<BounceLoader loading={!isSaved} size="20px" color="white" />}
       </div>
       {/* {!isConnected && <LoadingPopup />} */}

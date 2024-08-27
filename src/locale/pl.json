@@ -15,6 +15,7 @@
     "privacyPolicy": "Polityka prywatności",
     "termsOfService": "Warunki świadczenia usług",
     "emailConfirmedTitle": "Email potwierdzony",
-    "emailConfirmedMessage": "Twój email został pomyślnie potwierdzony. Możesz teraz się zalogować."
+    "emailConfirmedMessage": "Twój email został pomyślnie potwierdzony. Możesz teraz się zalogować.",
+    "owner": "Właściciel: "
   }
 }

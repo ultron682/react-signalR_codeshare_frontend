@@ -15,6 +15,7 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
     "emailConfirmedTitle": "Email Confirmed",
-    "emailConfirmedMessage": "Your email has been successfully confirmed. You can now log in."
+    "emailConfirmedMessage": "Your email has been successfully confirmed. You can now log in.",
+    "owner": "Owner: "
   }
 }
