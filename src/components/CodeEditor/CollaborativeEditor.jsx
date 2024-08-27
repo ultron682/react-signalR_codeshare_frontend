@@ -1,4 +1,4 @@
-import React, { useRef , useEffect} from "react";
+import React, { useRef, useEffect } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
 import "codemirror/lib/codemirror.css";
@@ -13,6 +13,11 @@ import "codemirror/mode/python/python.js";
 import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/swift/swift.js";
 
+import { basicSetup } from "@codemirror/basic-setup";
+import { EditorState } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
+import { javascript } from "@codemirror/lang-javascript";
+
 const CollaborativeEditor = ({
   documentContent,
   setDocumentContent,
@@ -21,72 +26,24 @@ const CollaborativeEditor = ({
   onHandleEditorChange,
   isConnected,
 }) => {
-  const editorRef = useRef(null);
+  const editor = useRef();
 
   useEffect(() => {
-    if (editorRef.current) {
-      const editor = editorRef.current.editor;
-      
-      console.log("Editor instance:", editor); // Debug: sprawdzenie instancji edytora
+    const log = (event) => console.log(event);
+    // editor.current.addEventListener("input", log);
 
-      const showTooltip = (e) => {
-        const { clientX: x, clientY: y } = e;
-        const coords = editor.coordsChar({ left: x, top: y });
-        const token = editor.getTokenAt(coords);
+    const state = EditorState.create({
+      doc: "a ",
+      extensions: [basicSetup, javascript()],
+    });
+    const view = new EditorView({ state, parent: editor.current });
+    return () => {
+      view.destroy();
+      // editor.current.removeEventListener("input", log);
+    };
+  }, []);
 
-        if (!token || !token.string) return; // Jeśli brak tokenu, wyjście
-
-        // Debug: sprawdzenie tokena
-        console.log("Token under cursor:", token);
-
-        // Tworzenie elementu plakietki
-        const tooltip = document.createElement("div");
-        tooltip.style.position = "absolute";
-        tooltip.style.backgroundColor = "yellow";
-        tooltip.style.padding = "5px";
-        tooltip.style.border = "1px solid black";
-        tooltip.style.zIndex = 1000;
-        tooltip.textContent = `Info: ${token.string}`;
-        document.body.appendChild(tooltip);
-
-        // Ustawienie pozycji plakietki
-        tooltip.style.left = `${x + 10}px`;
-        tooltip.style.top = `${y + 10}px`;
-
-        const removeTooltip = () => {
-          tooltip.remove();
-        };
-
-        editor.on("mouseout", removeTooltip);
-        editor.on("cursorActivity", removeTooltip);
-      };
-
-      editor.on("mousemove", showTooltip);
-
-      return () => {
-        editor.off("mousemove", showTooltip);
-      };
-    }
-  }, [editorRef]);
-
-
-  return (
-    <CodeMirror
-      ref={editorRef}
-      value={documentContent}
-      options={{
-        mode: languageProg,
-        theme: theme === "light" ? "material" : "material-darker",
-        lineNumbers: true,
-        lineWrapping: true,
-        readOnly: !isConnected ? "nocursor" : false
-      }}
-      onBeforeChange={(editor, data, value) => {
-        setDocumentContent(value);
-        onHandleEditorChange(editor, data, value);
-      }}
-    />
-  );
+  return <div ref={editor}></div>;
 };
 
 export default CollaborativeEditor;
