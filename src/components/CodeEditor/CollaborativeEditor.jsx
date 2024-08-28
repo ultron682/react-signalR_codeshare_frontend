@@ -9,6 +9,9 @@ import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { dracula, draculaDarkStyle } from "@uiw/codemirror-theme-dracula"; // Przykładowe tematy
 
+import {ChangeSet, Text} from "@codemirror/state"
+import {Update, rebaseUpdates} from "@codemirror/collab"
+
 const languageModes = {
   javascript: javascript(),
   xml: xml(),
