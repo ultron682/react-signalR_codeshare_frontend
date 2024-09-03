@@ -165,12 +165,21 @@ const CodeEditor = () => {
 
     setIsSaved(false);
     if (connection) {
-      console.log(viewUpdate)
-      const text = viewUpdate.changes.inserted[viewUpdate.changes.inserted.length == 1 ? 0 : 1].text[0];
+      console.log(viewUpdate);
+      let text;
+      
+      if (viewUpdate.changes.inserted.length > 0) {
+        text =
+          viewUpdate.changes.inserted[
+            viewUpdate.changes.inserted.length === 1 ? 0 : 1
+          ].text[0];
+      } else {
+        text = "";
+      }
       console.log(text);
-       const start = viewUpdate.changedRanges[0].fromA;
-       const end = viewUpdate.changedRanges[0].toB;
-       const length = end - start;
+      const start = viewUpdate.changedRanges[0].fromB ;
+      const end = viewUpdate.changedRanges[0].toB;
+      const length = end - start;
 
       const changeSet = {
         Start: start,

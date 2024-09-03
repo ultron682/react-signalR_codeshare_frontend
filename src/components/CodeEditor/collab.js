@@ -1,84 +1,117 @@
 import { EditorView, ViewPlugin, ViewUpdate } from "@codemirror/view";
 import { StateEffect, ChangeSet } from "@codemirror/state";
-import { Update, receiveUpdates, sendableUpdates, collab, getSyncedVersion } from "@codemirror/collab";
-import { Socket } from "socket.io-client";
+import {
+  Update,
+  receiveUpdates,
+  sendableUpdates,
+  collab,
+  getSyncedVersion,
+} from "@codemirror/collab";
+import * as signalR from "@microsoft/signalr";
 
-function pushUpdates(socket, version, fullUpdates) {
-	const updates = fullUpdates.map(u => ({
-		clientID: u.clientID,
-		changes: u.changes.toJSON(),
-		effects: u.effects
-	}));
+// Initialize the SignalR connection
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl("http://localhost:5555/codesharehub", {
+    withCredentials: false,
+  })
+  .withAutomaticReconnect()
+  .build();
 
-	return new Promise(resolve => {
-		socket.emit('pushUpdates', version, JSON.stringify(updates));
-		socket.once('pushUpdateResponse', resolve);
-	});
+// Start the connection
+connection
+  .start()
+  .catch((err) => console.error("SignalR connection error:", err));
+
+function pushUpdates(version, fullUpdates) {
+  const updates = fullUpdates.map((u) => ({
+    clientID: u.clientID,
+    changes: u.changes.toJSON(),
+    effects: u.effects,
+  }));
+
+  return new Promise((resolve) => {
+    connection
+      .invoke("PushUpdates", version, JSON.stringify(updates))
+      .then((status) => resolve(status))
+      .catch((err) => {
+        console.error("Error pushing updates:", err);
+        resolve(false);
+      });
+  });
 }
 
-function pullUpdates(socket, version) {
-	return new Promise(resolve => {
-		socket.emit('pullUpdates', version);
-		socket.once('pullUpdateResponse', updates => {
-			resolve(JSON.parse(updates));
-		});
-	}).then(updates => updates.map(u => ({
-		changes: ChangeSet.fromJSON(u.changes),
-		clientID: u.clientID,
-		effects: u.effects
-	})));
+export const pullUpdates = (version) => {
+  return new Promise((resolve) => {
+    connection
+      .invoke("PullUpdates", version)
+      .then((updatesJson) => resolve(JSON.parse(updatesJson)))
+      .catch((err) => {
+        console.error("Error pulling updates:", err);
+        resolve([]);
+      });
+  }).then((updates) =>
+    updates.map((u) => ({
+      changes: ChangeSet.fromJSON(u.changes),
+      clientID: u.clientID,
+    }))
+  );
 }
 
-export function getDocument(socket) {
-	return new Promise(resolve => {
-		socket.emit('getDocument');
-		socket.once('getDocumentResponse', (version, doc) => {
-			resolve({
-				version,
-				doc: Text.of(doc.split("\n"))
-			});
-		});
-	});
+export const getDocument= () => {
+  return new Promise((resolve) => {
+    connection
+      .invoke("GetDocument")
+      .then(([version, doc]) =>
+        resolve({
+          version,
+          doc: Text.of(doc.split("\n")),
+        })
+      )
+      .catch((err) => {
+        console.error("Error getting document:", err);
+        resolve({ version: 0, doc: Text.of([]) });
+      });
+  });
 }
 
-export const peerExtension = (socket, startVersion, id) => {
-	const plugin = ViewPlugin.fromClass(class {
-		pushing = false;
-		done = false;
+export const peerExtension = (startVersion) => {
+  const plugin = ViewPlugin.fromClass(
+    class {
+      constructor(view) {
+        this.view = view;
+        this.pushing = false;
+        this.done = false;
+        this.pull();
+      }
 
-		constructor(view) { this.pull(); }
+      update(update) {
+        if (update.docChanged || update.transactions.length) this.push();
+      }
 
-		update(update) {
-			if (update.docChanged || update.transactions.length) this.push();
-		}
+      async push() {
+        const updates = sendableUpdates(this.view.state);
+        if (this.pushing || !updates.length) return;
+        this.pushing = true;
+        const version = getSyncedVersion(this.view.state);
+        const success = await pushUpdates(version, updates);
+        this.pushing = false;
+        if (sendableUpdates(this.view.state).length)
+          setTimeout(() => this.push(), 100);
+      }
 
-		async push() {
-			const updates = sendableUpdates(this.view.state);
-			if (this.pushing || !updates.length) return;
-			this.pushing = true;
-			const version = getSyncedVersion(this.view.state);
-			const success = await pushUpdates(socket, version, updates);
-			this.pushing = false;
-			if (sendableUpdates(this.view.state).length)
-				setTimeout(() => this.push(), 100);
-		}
+      async pull() {
+        while (!this.done) {
+          const version = getSyncedVersion(this.view.state);
+          const updates = await pullUpdates(version);
+          this.view.dispatch(receiveUpdates(this.view.state, updates));
+        }
+      }
 
-		async pull() {
-			while (!this.done) {
-				const version = getSyncedVersion(this.view.state);
-				const updates = await pullUpdates(socket, version);
-				this.view.dispatch(receiveUpdates(this.view.state, updates));
-			}
-		}
+      destroy() {
+        this.done = true;
+      }
+    }
+  );
 
-		destroy() { this.done = true; }
-	});
-
-	return [
-		collab({
-			startVersion,
-			clientID: id,
-		}),
-		plugin
-	];
-}
+  return [collab({ startVersion }), plugin];
+};
