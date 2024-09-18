@@ -29,7 +29,7 @@ const CodeEditor = () => {
   const [languageProg, setLanguageProg] = useState("javascript");
   const [isConnected, setIsConnected] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
-  const [ownerNickname, setOwnerNickname] = useState(null);
+  // const { user } = useContext(AuthContext);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,7 +88,6 @@ const CodeEditor = () => {
 
             setDocumentContent(codeSnippet.code);
             setLanguageProg(codeSnippet.selectedLang);
-            setOwnerNickname(codeSnippet.ownerNickname);
           });
 
           connection.on("ReceiveUpdate", (changeSetJson) => {
@@ -159,32 +158,20 @@ const CodeEditor = () => {
     return newChanges;
   };
 
-  const handleEditorChange = (value, viewUpdate, editorRef) => {
+  const handleEditorChange = (editor, data, value) => {
     //console.log("handleEditorChange", isServerChangeRef.current);
     if (isServerChangeRef.current === true) return;
 
     setIsSaved(false);
     if (connection) {
-      console.log(viewUpdate);
-      let text;
-      
-      if (viewUpdate.changes.inserted.length > 0) {
-        text =
-          viewUpdate.changes.inserted[
-            viewUpdate.changes.inserted.length === 1 ? 0 : 1
-          ].text[0];
-      } else {
-        text = "";
-      }
-      console.log(text);
-      const start = viewUpdate.changedRanges[0].fromB ;
-      const end = viewUpdate.changedRanges[0].toB;
+      const start = editor.indexFromPos(data.from);
+      const end = editor.indexFromPos(data.to);
       const length = end - start;
 
       const changeSet = {
         Start: start,
         Length: length,
-        Text: text,
+        Text: data.text.join("\n"),
       };
 
       connection.invoke(
@@ -222,11 +209,6 @@ const CodeEditor = () => {
           data={documentContent}
         ></CodeDownloader>
 
-        {ownerNickname && (
-          <p>
-            {t("owner")} {ownerNickname}
-          </p>
-        )}
         {<BounceLoader loading={!isSaved} size="20px" color="white" />}
       </div>
       {/* {!isConnected && <LoadingPopup />} */}
