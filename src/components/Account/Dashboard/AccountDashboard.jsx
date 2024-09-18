@@ -20,6 +20,7 @@ const AccountDashboard = () => {
       setLoading(true);
       fetchAccountInfo().finally(() => setLoading(false));
     }
+    // eslint-disable-next-line
   }, [location]);
 
   const logoutHandler = () => {
