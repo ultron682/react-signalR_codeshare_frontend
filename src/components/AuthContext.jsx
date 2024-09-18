@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Błąd podczas pobierania informacji o koncie:", error);
 
-      if (error.response.status === 401) {
+      if (error.code === "ERR_NETWORK") {
         logout();
       }
     }
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "application/x-www-form-urlencoded",
+            Accept: "application/x-www-form-urlencoded",
           },
         }
       );
@@ -73,7 +73,7 @@ const AuthProvider = ({ children }) => {
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Accept": "application/x-www-form-urlencoded",
+            Accept: "application/x-www-form-urlencoded",
           },
         }
       );
