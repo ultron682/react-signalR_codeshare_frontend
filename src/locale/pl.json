@@ -5,7 +5,7 @@
     "noConnection": "Brak połączenia z serwerem.",
     "theme": "Motyw:",
     "lang": "Język:",
-    "login": "Zaloguj",
+    "login": "Zaloguj się",
     "register": "Zarejestruj się",
     "startHere": "Rozpocznij",
     "welcomeTo": "Witaj w CodeShare",
@@ -16,6 +16,17 @@
     "termsOfService": "Warunki świadczenia usług",
     "emailConfirmedTitle": "Email potwierdzony",
     "emailConfirmedMessage": "Twój email został pomyślnie potwierdzony. Możesz teraz się zalogować.",
-    "owner": "Właściciel: "
+    "owner": "Właściciel: ",
+    "password": "Hasło",
+    "noAccount": "Nie posiadasz konta?",
+    "registerHere": "Zarejestruj się tutaj",
+    "notEmailConfirmed": "Twój adres e-mail nie został potwierdzony.",
+    "pleaseConfAccount": "Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.",
+    "emailResent": "Email został ponownie wysłany!",
+    "resendEmail": "Wyślij ponownie e-mail potwierdzający",
+    "username": "Nazwa użytkownika",
+    "email": "Email",
+    "alreadytHaveAccount": "Masz już konto?",
+    "loginHere": "Zaloguj się tutaj"
   }
 }

@@ -3,6 +3,7 @@ import axios from "axios";
 import "../Form.css";
 import { Link } from "react-router-dom";
 import { BounceLoader } from "react-spinners";
+import { useTranslation } from "react-i18next";
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ const RegisterForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,10 +74,10 @@ const RegisterForm = () => {
 
   return (
     <div className="form-container">
-      <h2>Register</h2>
+      <h2>{t("register")}</h2>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
-          <label>Username</label>
+          <label>{t("username")}</label>
           <input
             type="text"
             value={username}
@@ -83,7 +85,7 @@ const RegisterForm = () => {
           />
         </div>
         <div className="input-group">
-          <label>Email</label>
+          <label>{t("email")}</label>
           <input
             type="email"
             value={email}
@@ -91,7 +93,7 @@ const RegisterForm = () => {
           />
         </div>
         <div className="input-group">
-          <label>Password</label>
+          <label>{t("password")}</label>
           <input
             type="password"
             value={password}
@@ -102,13 +104,13 @@ const RegisterForm = () => {
         {success && <p className="success-text">{success}</p>}
         {!success && (
           <button type="submit" className="submit-btn">
-            Register
+            {t("register")}
             {<BounceLoader loading={isLoading} size="20px" color="white" />}
           </button>
         )}
       </form>
       <Link to="/account/login" className="account-link">
-        Already have an account? <span>Login here</span>
+        {t("alreadytHaveAccount")} <span>{t("loginHere")}</span>
       </Link>
     </div>
   );

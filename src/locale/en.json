@@ -16,6 +16,17 @@
     "termsOfService": "Terms of Service",
     "emailConfirmedTitle": "Email Confirmed",
     "emailConfirmedMessage": "Your email has been successfully confirmed. You can now log in.",
-    "owner": "Owner: "
+    "owner": "Owner: ",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "notEmailConfirmed": "Your email address has not been confirmed.",
+    "pleaseConfAccount": "Please check your mailbox to confirm your account.",
+    "emailResent": "Email has been resent!",
+    "resendEmail": "Resend confirmation email",
+    "username": "Username",
+    "email": "Email",
+    "alreadytHaveAccount": "Already have an account?",
+    "loginHere": "Log in here"
   }
 }

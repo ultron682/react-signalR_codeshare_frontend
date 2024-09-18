@@ -21,6 +21,8 @@ const CodeEditor = () => {
   const documentContentRef = useRef(documentContent);
   documentContentRef.current = documentContent;
 
+  const [ownerShip, setOwnerShip] = useState("");
+
   const [connection, setConnection] = useState(null);
 
   const isServerChangeRef = useRef(false);
@@ -88,6 +90,7 @@ const CodeEditor = () => {
 
             setDocumentContent(codeSnippet.code);
             setLanguageProg(codeSnippet.selectedLang);
+            setOwnerShip(codeSnippet.ownerNickname);
           });
 
           connection.on("ReceiveUpdate", (changeSetJson) => {
@@ -208,6 +211,8 @@ const CodeEditor = () => {
           filename={uniqueId}
           data={documentContent}
         ></CodeDownloader>
+
+        {ownerShip && <p>Dokument należy do: {ownerShip}</p>}
 
         {<BounceLoader loading={!isSaved} size="20px" color="white" />}
       </div>

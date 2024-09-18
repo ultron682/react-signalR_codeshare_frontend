@@ -5,6 +5,7 @@ import "./LoginForm.module.css";
 import { AuthContext } from "../../AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { BounceLoader } from "react-spinners";
+import { useTranslation } from "react-i18next";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const LoginForm = () => {
   const [emailResent, setEmailResent] = useState(false);
   const [emailConfirmed, setEmailConfirmed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +58,7 @@ const LoginForm = () => {
 
   return (
     <div className="form-container">
-      <h2>Login</h2>
+      <h2>{t("login")}</h2>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Email</label>
@@ -67,7 +69,7 @@ const LoginForm = () => {
           />
         </div>
         <div className="input-group">
-          <label>Password</label>
+          <label>{t("password")}</label>
           <input
             type="password"
             value={password}
@@ -78,20 +80,16 @@ const LoginForm = () => {
 
         {!emailConfirmed && (
           <div className="email-confirmation-box">
-            <p>Twój adres e-mail nie został potwierdzony.</p>
-            <p>
-              Proszę sprawdzić swoją skrzynkę pocztową, aby potwierdzić konto.
-            </p>
+            <p>{t("notEmailConfirmed")}</p>
+            <p>{t("pleaseConfAccount")}</p>
             {emailResent ? (
-              <p className="email-resent-message">
-                Email został ponownie wysłany!
-              </p>
+              <p className="email-resent-message">{t("emailResent")}</p>
             ) : (
               <button
                 className="resend-email-button"
                 onClick={handleResendEmail}
               >
-                Wyślij ponownie e-mail potwierdzający
+                {t("resendEmail")}
               </button>
             )}
           </div>
@@ -103,7 +101,7 @@ const LoginForm = () => {
       </form>
       <p className="toggle-text">
         <Link to="/account/register" className="account-link">
-          Don't have an account? <span>Register here</span>
+          {t("noAccount")} <span>{t("registerHere")}</span>
         </Link>
       </p>
     </div>
