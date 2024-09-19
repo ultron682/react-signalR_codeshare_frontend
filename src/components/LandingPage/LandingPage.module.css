@@ -1,101 +1,151 @@
 .landing_container {
   text-align: center;
-  color: #fff;
+  color: #f9f9f9;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   overflow: hidden;
-}
-
-.video_container {
-  width: 90%;
-  overflow: hidden;
-  opacity: 0;
-  animation: fadeIn 1s forwards;
-  animation-delay: 2s;
-  border-radius: 25px;
-}
-
-.background_video {
-  width: 100%;
-  height: 0px;
-  object-fit: cover;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: -1;
-  opacity: 0;
-  animation: fadeIn 1s forwards;
-  animation-delay: 2s;
+  padding: 0 1rem;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  color: #fff;
 }
 
 .landing_container h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
 }
 
 .landing_container p {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
+  font-size: 1.35rem;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
 }
 
 .button_group {
   display: flex;
-  gap: 1rem;
-  padding: 10px;
+  gap: 1.5rem;
+  padding: 20px;
 }
 
 .landing_button {
-  padding: 0.75rem 1.5rem;
-  background-color: #4caf50;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #4caf50, #45a049);
   color: #fff;
-  border: none;
-  border-radius: 4px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-transform: uppercase;
   text-decoration: none;
-  font-size: 1rem;
 }
 
 .landing_button:hover {
-  background-color: #45a049;
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.2);
 }
 
 .features_section {
-  margin: 3rem 0;
+  margin: 4rem 0;
+  color: #fff;
+  text-align: left;
 }
 
 .features_list {
   list-style-type: none;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .features_list li {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.features_list li:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.video_container {
+  width: 100%;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+  animation-delay: 2s;
+  border-radius: 25px;
+  position: relative;
+}
+
+.background_video {
+  width: 100%;
+  height: 0;
+  object-fit: cover;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+  animation-delay: 2s;
+}
+
+.video_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .testimonials_section {
-  margin-top: 3rem;
+  margin-top: 4rem;
+  color: #fff;
 }
 
 .testimonial {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   border-left: 4px solid #4caf50;
-  margin: 1rem 0;
-  padding: 1rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
   font-style: italic;
+  border-radius: 10px;
+  position: relative;
+}
+
+.testimonial p {
+  margin: 30px 30px;
 }
 
 .testimonial_author {
   text-align: right;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   font-weight: bold;
+}
+
+.testimonial::before {
+  content: "“";
+  font-size: 3rem;
+  position: absolute;
+  color: #4caf50;
+  left: 2rem;
+}
+
+.testimonial::after {
+  content: "”";
+  font-size: 3rem;
+  position: absolute;
+  color: #4caf50;
+  right: 2rem;
+  bottom: 2rem;
 }
 
 @keyframes fadeIn {
