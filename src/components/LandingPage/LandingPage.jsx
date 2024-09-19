@@ -43,13 +43,6 @@ const LandingPage = () => {
         </div>
       )}
 
-      <div className={styles.video_container}>
-        <video className={styles.background_video} autoPlay loop muted>
-          <source src="landing_video.mp4" type="video/mp4" />
-          {t("videoNotSupported")}
-        </video>
-      </div>
-
       <section className={styles.features_section}>
         <h2>{t("featuresTitle")}</h2>
         <ul className={styles.features_list}>
@@ -58,6 +51,13 @@ const LandingPage = () => {
           <li>{t("feature3")}</li>
         </ul>
       </section>
+
+      <div className={styles.video_container}>
+        <video className={styles.background_video} autoPlay loop muted>
+          <source src="landing_video.mp4" type="video/mp4" />
+          {t("videoNotSupported")}
+        </video>
+      </div>
 
       <section className={styles.testimonials_section}>
         <h2>{t("userTestimonials")}</h2>
