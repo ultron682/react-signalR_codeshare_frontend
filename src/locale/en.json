@@ -27,6 +27,22 @@
     "username": "Username",
     "email": "Email",
     "alreadytHaveAccount": "Already have an account?",
-    "loginHere": "Log in here"
+    "loginHere": "Log in here",
+    "accountDashboardTitle": "User Dashboard",
+    "loading": "Loading...",
+    "welcomeUser": "Welcome, {{userName}}",
+    "logout": "Logout",
+    "newNickname": "New Nickname",
+    "changeNickname": "Change Nickname",
+    "delete": "Delete",
+    "confirmDeleteSnippet": "Are you sure you want to delete this snippet?",
+    "snippetDeletedSuccess": "Snippet successfully deleted!",
+    "snippetDeletedError": "Error deleting snippet",
+    "snippetDeletedErrorLog": "Error deleting snippet:",
+    "nicknameChangedSuccess": "Nickname successfully changed!",
+    "nicknameChangedError": "Error changing nickname",
+    "nicknameChangedErrorLog": "Error changing nickname:",
+    "noSnippets": "It's still empty here :( Start working on a new document and it will be assigned to your account!",
+    "noPremium": "You don't have a premium account. You can't create more than 10 snippets."
   }
 }

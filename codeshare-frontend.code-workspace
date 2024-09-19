@@ -4,5 +4,7 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"react-i18n.i18nPaths": "src\\locale"
+	}
 }

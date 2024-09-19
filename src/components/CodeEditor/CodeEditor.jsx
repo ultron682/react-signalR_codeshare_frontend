@@ -21,14 +21,16 @@ const CodeEditor = () => {
   const documentContentRef = useRef(documentContent);
   documentContentRef.current = documentContent;
 
-  const [ownerShip, setOwnerShip] = useState("");
+  const [ownerShip, setOwnerShip] = useState(null);
+  const [readOnlyForOthers, setReadOnlyForOthers] = useState(false);
+  const [languageProg, setLanguageProg] = useState("javascript");
 
   const [connection, setConnection] = useState(null);
 
   const isServerChangeRef = useRef(false);
 
   const [uniqueId, setUniqueId] = useState("temp");
-  const [languageProg, setLanguageProg] = useState("javascript");
+
   const [isConnected, setIsConnected] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   // const { user } = useContext(AuthContext);
@@ -90,7 +92,8 @@ const CodeEditor = () => {
 
             setDocumentContent(codeSnippet.code);
             setLanguageProg(codeSnippet.selectedLang);
-            setOwnerShip(codeSnippet.ownerNickname);
+            setOwnerShip(codeSnippet.owner);
+            setReadOnlyForOthers(codeSnippet.readOnly);
           });
 
           connection.on("ReceiveUpdate", (changeSetJson) => {
@@ -112,6 +115,22 @@ const CodeEditor = () => {
 
             setDocumentContent(updatedDoc);
           });
+
+          connection.on(
+            "OnCodeSnippetPropertyChange",
+            (propertyName, propertyValue) => {
+              switch (propertyName) {
+                case "lang":
+                  setLanguageProg(propertyValue);
+                  break;
+                case "readOnly":
+                  setReadOnlyForOthers(propertyValue === "true");
+                  break;
+                default:
+                  break;
+              }
+            }
+          );
 
           connection.invoke("JoinToDocument", uniqueId);
 
@@ -148,6 +167,24 @@ const CodeEditor = () => {
 
   const handleLanguageProgChange = (event) => {
     setLanguageProg(event.target.value);
+
+    connection.invoke(
+      "ChangeCodeSnippetProperty",
+      "lang",
+      event.target.value,
+      user !== null ? user.id : null
+    );
+  };
+
+  const handleReadOnlyForOthers = (event) => {
+    setReadOnlyForOthers(event.target.checked);
+    console.log("handleReadOnlyForOthers", event.target.checked);
+    connection.invoke(
+      "ChangeCodeSnippetProperty",
+      "readOnly",
+      event.target.checked.toString(),
+      user !== null ? user.id : null
+    );
   };
 
   const applyChangeSet = (doc, changeSet) => {
@@ -181,7 +218,15 @@ const CodeEditor = () => {
         "PushUpdate",
         JSON.stringify(changeSet),
         user !== null ? user.id : ""
-      );
+      ); // on push update when document is empty then doc will belong to user who pushed first update
+
+      if (user !== null) {
+        setOwnerShip({
+          userId: user.id,
+          nickname: user.nickname,
+        });
+      }
+
       console.log("handleEditorChange", JSON.stringify(changeSet));
       setIsSaved(true);
     }
@@ -194,28 +239,95 @@ const CodeEditor = () => {
           "toolsBar " + (theme === "light" ? "toolsBar-light" : "toolsBar-dark")
         }
       >
-        <label htmlFor="languageSelect">{t("lang")}</label>
-        <select
-          id="languageSelect"
-          onChange={handleLanguageProgChange}
-          value={languageProg}
-        >
-          {optionsLang.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </select>
+        <div className="left-side">
+          {(() => {
+            if (
+              (user != null &&
+                ownerShip != null &&
+                ownerShip.userId === user.id) ||
+              readOnlyForOthers === false
+            ) {
+              return (
+                <>
+                  <label htmlFor="languageSelect" className="toolsBar-label">
+                    {t("lang")}
+                  </label>
+                  <select
+                    id="languageSelect"
+                    onChange={handleLanguageProgChange}
+                    value={languageProg}
+                    className="toolsBar-select"
+                  >
+                    {optionsLang.map((lang) => (
+                      <option key={lang} value={lang}>
+                        {lang}
+                      </option>
+                    ))}
+                  </select>
 
+                  {user != null && ownerShip != null && (
+                    <div className="toolsBar-checkboxContainer">
+                      <input
+                        id="readOnlyForOthers"
+                        type="checkbox"
+                        className="toolsBar-checkbox"
+                        checked={readOnlyForOthers}
+                        onChange={handleReadOnlyForOthers}
+                      />
+                      <label
+                        htmlFor="readOnlyForOthers"
+                        className="toolsBar-checkboxLabel"
+                      >
+                        Tylko do odczytu dla innych
+                      </label>
+                    </div>
+                  )}
+                </>
+              );
+            } else {
+              return (
+                <div className="toolsBar-checkboxContainer">
+                  <p style={{ color: "red" }}>
+                    Brak uprawnień do wprowadzania zmian!
+                  </p>
+                </div>
+              );
+            }
+          })()}
+
+          {(() => {
+            if (user == null && ownerShip != null) {
+              return (
+                <p className="toolsBar-ownership">
+                  Dokument należy do: {ownerShip.nickname}
+                </p>
+              );
+            } else if (
+              ownerShip != null &&
+              user != null &&
+              ownerShip.userId !== user.id
+            ) {
+              return (
+                <p className="toolsBar-ownership">
+                  Dokument należy do: {ownerShip.nickname}
+                </p>
+              );
+            }
+          })()}
+
+          <BounceLoader
+            loading={!isSaved}
+            size="20px"
+            color={theme === "light" ? "#1e1e1e" : "white"}
+          />
+        </div>
         <CodeDownloader
           filename={uniqueId}
           data={documentContent}
-        ></CodeDownloader>
-
-        {ownerShip && <p>Dokument należy do: {ownerShip}</p>}
-
-        {<BounceLoader loading={!isSaved} size="20px" color="white" />}
+          className="toolsBar-button"
+        />
       </div>
+
       {/* {!isConnected && <LoadingPopup />} */}
       {!isConnected && (
         <div className="noConnection__container">
@@ -233,6 +345,7 @@ const CodeEditor = () => {
         theme={theme}
         onHandleEditorChange={handleEditorChange}
         isConnected={isConnected}
+        readOnlyDocument={readOnlyForOthers && ownerShip?.userId !== user?.id}
       ></CollaborativeEditor>
     </div>
   );

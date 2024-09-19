@@ -20,6 +20,7 @@ const CollaborativeEditor = ({
   theme,
   onHandleEditorChange,
   isConnected,
+  readOnlyDocument,
 }) => {
   const editorRef = useRef(null);
 
@@ -32,7 +33,7 @@ const CollaborativeEditor = ({
         theme: theme === "light" ? "material" : "material-darker",
         lineNumbers: true,
         lineWrapping: true,
-        readOnly: !isConnected ? "nocursor" : false,
+        readOnly: !isConnected || readOnlyDocument ? "nocursor" : false,
       }}
       onBeforeChange={(editor, data, value) => {
         setDocumentContent(value);

@@ -27,6 +27,22 @@
     "username": "Nazwa użytkownika",
     "email": "Email",
     "alreadytHaveAccount": "Masz już konto?",
-    "loginHere": "Zaloguj się tutaj"
+    "loginHere": "Zaloguj się tutaj",
+    "accountDashboardTitle": "Panel użytkownika",
+    "loading": "Ładowanie...",
+    "welcomeUser": "Witaj, {{userName}}",
+    "logout": "Wyloguj się",
+    "newNickname": "Nowy pseudonim",
+    "changeNickname": "Zmień pseudonim",
+    "delete": "Usuń",
+    "confirmDeleteSnippet": "Czy na pewno chcesz usunąć ten fragment kodu?",
+    "snippetDeletedSuccess": "Fragment kodu został pomyślnie usunięty!",
+    "snippetDeletedError": "Błąd podczas usuwania kodu",
+    "snippetDeletedErrorLog": "Błąd podczas usuwania kodu:",
+    "nicknameChangedSuccess": "Pseudonim został pomyślnie zmieniony!",
+    "nicknameChangedError": "Błąd podczas zmiany pseudonimu",
+    "nicknameChangedErrorLog": "Błąd podczas zmiany pseudonimu:",
+    "noSnippets": "Jeszcze tu pusto :( Rozpocznij pracę nad nowym dokumentem a zostanie on przypisany do twojego konta!",
+    "noPremium": "W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów!"
   }
 }
