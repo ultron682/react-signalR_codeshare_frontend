@@ -16,6 +16,9 @@ import "./App.css";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import ConfirmedEmail from "./components/Account/ConfirmedEmail/ConfirmedEmail.jsx";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const { theme } = useTheme();
   const { token } = useContext(AuthContext);
@@ -38,9 +41,12 @@ function App() {
     <div className="app-container">
       <Header />
 
-      <main className={[ (isFooterHidden ? "footer__hidden" : ""),  
-        (theme === "light" ? "light_theme" : "dark_theme")
-      ].join(' ')}>
+      <main
+        className={[
+          isFooterHidden ? "footer__hidden" : "",
+          theme === "light" ? "light_theme" : "dark_theme",
+        ].join(" ")}
+      >
         <Routes>
           <Route path="/account/login" element={<LoginForm />} />
           <Route path="/account/register" element={<RegisterForm />} />
@@ -56,6 +62,18 @@ function App() {
           <Route path="/:id" element={<CodeEditor class="CodeEditor" />} />
           <Route index path="/" element={<LandingPage />} />
         </Routes>
+        <ToastContainer
+          position="top-center"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </main>
 
       <Footer isHidden={isFooterHidden} />

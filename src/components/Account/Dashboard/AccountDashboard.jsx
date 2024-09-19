@@ -71,19 +71,37 @@ const AccountDashboard = () => {
             <button className="logout-button" onClick={logoutHandler}>
               <FaSignOutAlt /> {t("logout")}
             </button>
-            <h2>Twoje kody:</h2>
-            <div className="progress-bar">
-              <div
-                className="progress"
-                style={{ width: `${(user.codeSnippets.length / 10) * 100}%` }}
-              ></div>
-            </div>
+
+            <form className="nickname-form" onSubmit={handleNicknameSubmit}>
+              <label htmlFor="nickname">{t("newNickname")}</label>
+              <input
+                type="text"
+                id="nickname"
+                value={newNickname}
+                onChange={handleNicknameChange}
+              />
+              <button type="submit">{t("changeNickname")}</button>
+            </form>
+
             <h3>{t("noPremium")}</h3>
+            {user.codeSnippets.length > 0 && (
+              <div className="progress-bar">
+                <div
+                  className="progress"
+                  style={{ width: `${(user.codeSnippets.length / 10) * 100}%` }}
+                >
+                  <p className="progress-text">
+                    ({user.codeSnippets.length} / 10)
+                  </p>
+                </div>
+              </div>
+            )}
+            <h2>Twoje kody:</h2>
             {user.codeSnippets.length > 0 ? (
               <ul className="code-list">
                 {user.codeSnippets.map((item) => (
                   <Link to={"/" + item.uniqueId} className="code-link">
-                    <li key={item.$id} className="code-item">
+                    <li key={item.uniqueId} className="code-item">
                       {item.uniqueId}
 
                       <p>{item.code}</p>
@@ -100,17 +118,6 @@ const AccountDashboard = () => {
             ) : (
               <p>{t("noSnippets")}</p>
             )}
-
-            <form className="nickname-form" onSubmit={handleNicknameChange}>
-              <label htmlFor="nickname">{t("newNickname")}</label>
-              <input
-                type="text"
-                id="nickname"
-                value={newNickname}
-                onChange={handleNicknameChange}
-              />
-              <button type="submit">{t("changeNickname")}</button>
-            </form>
           </div>
         )
       )}
