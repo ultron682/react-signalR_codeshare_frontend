@@ -43,6 +43,7 @@
     "nicknameChangedError": "Błąd podczas zmiany pseudonimu",
     "nicknameChangedErrorLog": "Błąd podczas zmiany pseudonimu:",
     "noSnippets": "Jeszcze tu pusto :( Rozpocznij pracę nad nowym dokumentem a zostanie on przypisany do twojego konta!",
-    "noPremium": "W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów!"
+    "noPremium": "W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów!",
+    "over10Documents": "Przekroczono limit 10 dokumentów! Dokument nie zostanie przypisany do twojego konta."
   }
 }

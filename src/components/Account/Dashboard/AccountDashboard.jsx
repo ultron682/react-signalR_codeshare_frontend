@@ -100,19 +100,19 @@ const AccountDashboard = () => {
             {user.codeSnippets.length > 0 ? (
               <ul className="code-list">
                 {user.codeSnippets.map((item) => (
-                  <Link to={"/" + item.uniqueId} className="code-link">
-                    <li key={item.uniqueId} className="code-item">
+                  <li key={item.uniqueId} className="code-item">
+                    <Link to={"/" + item.uniqueId} className="code-link">
                       {item.uniqueId}
+                    </Link>
 
-                      <p>{item.code}</p>
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDelete(item.uniqueId)}
-                      >
-                        <FaTrash /> {t("delete")}
-                      </button>
-                    </li>
-                  </Link>
+                    <p>{item.code}</p>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(item.uniqueId)}
+                    >
+                      <FaTrash /> {t("delete")}
+                    </button>
+                  </li>
                 ))}
               </ul>
             ) : (

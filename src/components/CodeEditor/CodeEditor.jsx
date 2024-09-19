@@ -11,29 +11,27 @@ import { AuthContext } from "../AuthContext";
 import CodeDownloader from "./CodeDownloader";
 import { BounceLoader } from "react-spinners";
 import CollaborativeEditor from "./CollaborativeEditor";
+import { toast } from "react-toastify";
 
 const CodeEditor = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { user } = useContext(AuthContext);
 
+  const [connection, setConnection] = useState(null);
+  const isServerChangeRef = useRef(false);
   const [documentContent, setDocumentContent] = useState("");
   const documentContentRef = useRef(documentContent);
   documentContentRef.current = documentContent;
+  const [isConnected, setIsConnected] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
 
   const [ownerShip, setOwnerShip] = useState(null);
   const [readOnlyForOthers, setReadOnlyForOthers] = useState(false);
   const [languageProg, setLanguageProg] = useState("javascript");
-
-  const [connection, setConnection] = useState(null);
-
-  const isServerChangeRef = useRef(false);
+  const [lastErrorDueToOver10Docs, setLastErrorDueToOver10Docs] = useState("");
 
   const [uniqueId, setUniqueId] = useState("temp");
-
-  const [isConnected, setIsConnected] = useState(true);
-  const [isSaved, setIsSaved] = useState(false);
-  // const { user } = useContext(AuthContext);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -178,7 +176,6 @@ const CodeEditor = () => {
 
   const handleReadOnlyForOthers = (event) => {
     setReadOnlyForOthers(event.target.checked);
-    console.log("handleReadOnlyForOthers", event.target.checked);
     connection.invoke(
       "ChangeCodeSnippetProperty",
       "readOnly",
@@ -220,11 +217,18 @@ const CodeEditor = () => {
         user !== null ? user.id : ""
       ); // on push update when document is empty then doc will belong to user who pushed first update
 
-      if (user !== null) {
-        setOwnerShip({
-          userId: user.id,
-          nickname: user.nickname,
-        });
+      if (user !== null && ownerShip === null) {
+        if (user.codeSnippets.length <= 10) {
+          setOwnerShip({
+            userId: user.id,
+            nickname: user.nickname,
+          });
+        } else {
+          if (lastErrorDueToOver10Docs !== uniqueId) {
+            toast.error(t("over10Documents"));
+            setLastErrorDueToOver10Docs(uniqueId);
+          }
+        }
       }
 
       console.log("handleEditorChange", JSON.stringify(changeSet));
