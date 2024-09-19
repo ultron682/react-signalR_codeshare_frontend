@@ -46,9 +46,18 @@ const LandingPage = () => {
       <section className={styles.features_section}>
         <h2>{t("featuresTitle")}</h2>
         <ul className={styles.features_list}>
-          <li>{t("feature1")}</li>
-          <li>{t("feature2")}</li>
-          <li>{t("feature3")}</li>
+          <li>
+            <img width="35rem" src="/icons/feature1.png" alt="Feature 1" />
+            <p>{t("feature1")}</p>
+          </li>
+          <li>
+            <img width="35rem" src="/icons/feature2.png" alt="Feature 2" />
+            <p>{t("feature2")}</p>
+          </li>
+          <li>
+            <img width="35rem" src="/icons/feature3.png" alt="Feature 3" />
+            <p>{t("feature3")}</p>
+          </li>
         </ul>
       </section>
 
@@ -57,6 +66,7 @@ const LandingPage = () => {
           <source src="landing_video.mp4" type="video/mp4" />
           {t("videoNotSupported")}
         </video>
+        <div className={styles.video_overlay}></div>
       </div>
 
       <section className={styles.testimonials_section}>
