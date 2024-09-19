@@ -20,20 +20,19 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div
-      className={`${styles.landing_container}`}
-    >
-      <h1>{t("welcomeTo")}</h1>
-      <p>{t("yourJourney")}</p>
+    <div className={styles.landing_container}>
+      <header className={styles.header}>
+        <h1>{t("welcomeTo")}</h1>
+        <p>{t("yourJourney")}</p>
+      </header>
+
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>
           {t("startHere")}
         </Link>
       </div>
-      <p className={styles.title}>{t("desccodeshare")}</p>
-      
-      {user == null &&
-      (
+
+      {user == null && (
         <div className={styles.button_group}>
           <Link to="/account/login" className={styles.landing_button}>
             {t("login")}
@@ -43,6 +42,38 @@ const LandingPage = () => {
           </Link>
         </div>
       )}
+
+      <div className={styles.video_container}>
+        <video className={styles.background_video} autoPlay loop muted>
+          <source src="landing_video.mp4" type="video/mp4" />
+          {t("videoNotSupported")}
+        </video>
+      </div>
+
+      <section className={styles.features_section}>
+        <h2>{t("featuresTitle")}</h2>
+        <ul className={styles.features_list}>
+          <li>{t("feature1")}</li>
+          <li>{t("feature2")}</li>
+          <li>{t("feature3")}</li>
+        </ul>
+      </section>
+
+      <section className={styles.testimonials_section}>
+        <h2>{t("userTestimonials")}</h2>
+        <blockquote className={styles.testimonial}>
+          <p>{t("testimonial1")}</p>
+          <div className={styles.testimonial_author}>
+            {t("testimonial1Author")}
+          </div>
+        </blockquote>
+        <blockquote className={styles.testimonial}>
+          <p>{t("testimonial2")}</p>
+          <div className={styles.testimonial_author}>
+            {t("testimonial2Author")}
+          </div>
+        </blockquote>
+      </section>
     </div>
   );
 };

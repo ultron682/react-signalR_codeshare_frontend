@@ -44,6 +44,17 @@
     "nicknameChangedErrorLog": "Error changing nickname:",
     "noSnippets": "It's still empty here :( Start working on a new document and it will be assigned to your account!",
     "noPremium": "You don't have a premium account. You can't create more than 10 snippets.",
-    "over10Documents": "You have exceeded the limit of 10 snippets! The document will not be assigned to your account."
+    "over10Documents": "You have exceeded the limit of 10 snippets! The document will not be assigned to your account.",
+    "howItWorks": "How does it work?",
+    "videoNotSupported": "Your browser does not support the video.",
+    "featuresTitle": "Key Features",
+    "feature1": "Real-time code editing with other users",
+    "feature2": "Secure code sharing with unique links",
+    "feature3": "Supports multiple programming languages",
+    "userTestimonials": "User Testimonials",
+    "testimonial1": "Great tool for collaborative programming! Makes remote teamwork easy.",
+    "testimonial1Author": "John Smith, Developer",
+    "testimonial2": "With this app, I can share my code in seconds. Very intuitive.",
+    "testimonial2Author": "Jane Doe, Frontend Developer"
   }
 }

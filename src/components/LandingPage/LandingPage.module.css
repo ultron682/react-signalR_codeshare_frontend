@@ -1,11 +1,31 @@
 .landing_container {
   text-align: center;
   color: #fff;
-  min-height: inherit;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+.video_container {
+  height: 0px; /* Height option*/
+  width: 100%;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+  animation-delay: 2s;
+}
+
+.background_video {
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: initial;
+}
+
+.header {
+  margin-bottom: 2rem;
 }
 
 .landing_container h1 {
@@ -36,4 +56,47 @@
 
 .landing_button:hover {
   background-color: #45a049;
+}
+
+.features_section {
+  margin: 3rem 0;
+}
+
+.features_list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.features_list li {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.testimonials_section {
+  margin-top: 3rem;
+}
+
+.testimonial {
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #4caf50;
+  margin: 1rem 0;
+  padding: 1rem;
+  font-style: italic;
+}
+
+.testimonial_author {
+  text-align: right;
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    height: 0%;
+  }
+  to {
+    opacity: 1;
+    height: 100%;
+  }
 }

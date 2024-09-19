@@ -44,6 +44,17 @@
     "nicknameChangedErrorLog": "Błąd podczas zmiany pseudonimu:",
     "noSnippets": "Jeszcze tu pusto :( Rozpocznij pracę nad nowym dokumentem a zostanie on przypisany do twojego konta!",
     "noPremium": "W darmowej wersji konta możesz posiadać maksymalnie 10 dokumentów!",
-    "over10Documents": "Przekroczono limit 10 dokumentów! Dokument nie zostanie przypisany do twojego konta."
+    "over10Documents": "Przekroczono limit 10 dokumentów! Dokument nie zostanie przypisany do twojego konta.",
+    "howItWorks": "Jak to działa?",
+    "videoNotSupported": "Twój przeglądarka nie obsługuje wideo.",
+    "featuresTitle": "Najważniejsze funkcje",
+    "feature1": "Edytuj kod w czasie rzeczywistym z innymi użytkownikami",
+    "feature2": "Bezpieczne udostępnianie kodu z unikalnymi linkami",
+    "feature3": "Wsparcie dla wielu języków programowania",
+    "userTestimonials": "Opinie użytkowników",
+    "testimonial1": "Świetne narzędzie do wspólnego programowania! Ułatwia pracę w zespołach zdalnych.",
+    "testimonial1Author": "Jan Kowalski, Programista",
+    "testimonial2": "Dzięki tej aplikacji mogę udostępniać kod w kilka sekund. Bardzo intuicyjna.",
+    "testimonial2Author": "Anna Nowak, Frontend Developer"
   }
 }
