@@ -218,7 +218,7 @@ const CodeEditor = () => {
       ); // on push update when document is empty then doc will belong to user who pushed first update
 
       if (user !== null && ownerShip === null) {
-        if (user.codeSnippets.length <= 10) {
+        if (user.codeSnippets.length < 10) {
           setOwnerShip({
             userId: user.id,
             nickname: user.nickname,
