@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import styles from "./LandingPage.module.css";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "../AuthContext";
+import { useTheme } from "../ThemeContext";
 
 const LandingPage = () => {
   const [uniqueId, setUniqueId] = useState("");
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
+  const { theme } = useTheme();
 
   const generateUniqueId = () => {
     return "xxxxx".replace(/x/g, () => {
@@ -20,7 +22,12 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className={styles.landing_container}>
+    <div
+      className={[
+        styles.landing_container,
+        theme === "light" ? styles.light_theme : styles.dark_theme,
+      ].join(" ")}
+    >
       <header className={styles.header}>
         <h1>{t("welcomeTo")}</h1>
         <p>{t("yourJourney")}</p>
