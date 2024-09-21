@@ -109,9 +109,11 @@ const RegisterForm = () => {
           </button>
         )}
       </form>
-      <Link to="/account/login" className="account-link">
-        {t("alreadytHaveAccount")} <span>{t("loginHere")}</span>
-      </Link>
+      <p className="toggle-text">
+        <Link to="/account/login" className="account-link">
+          {t("alreadytHaveAccount")} <span>{t("loginHere")}</span>
+        </Link>
+      </p>
     </div>
   );
 };
