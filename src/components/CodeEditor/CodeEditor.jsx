@@ -282,7 +282,7 @@ const CodeEditor = () => {
                         htmlFor="readOnlyForOthers"
                         className="toolsBar-checkboxLabel"
                       >
-                        Tylko do odczytu dla innych
+                        {t("onlyReadForOthers")}
                       </label>
                     </div>
                   )}
@@ -291,29 +291,22 @@ const CodeEditor = () => {
             } else {
               return (
                 <div className="toolsBar-checkboxContainer">
-                  <p style={{ color: "red" }}>
-                    Brak uprawnień do wprowadzania zmian!
-                  </p>
+                  <p style={{ color: "red" }}>{t("noPrivalages")}</p>
                 </div>
               );
             }
           })()}
 
           {(() => {
-            if (user == null && ownerShip != null) {
-              return (
-                <p className="toolsBar-ownership">
-                  Dokument należy do: {ownerShip.nickname}
-                </p>
-              );
-            } else if (
-              ownerShip != null &&
-              user != null &&
-              ownerShip.userId !== user.id
+            if (
+              (user == null && ownerShip != null) ||
+              (ownerShip != null &&
+                user != null &&
+                ownerShip.userId !== user.id)
             ) {
               return (
                 <p className="toolsBar-ownership">
-                  Dokument należy do: {ownerShip.nickname}
+                  {t("docBelongTo")} {ownerShip.nickname}
                 </p>
               );
             }

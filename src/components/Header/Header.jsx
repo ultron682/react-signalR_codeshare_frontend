@@ -20,9 +20,12 @@ function Header() {
     const newLanguage = currentLanguage === "en" ? "pl" : "en";
     setCurrentLanguage(newLanguage);
     changeLanguage(newLanguage);
+    localStorage.setItem("i18nextLng", currentLanguage);
   };
   return (
-    <header className={`header ${theme === "light" ? "light-theme" : "dark-theme"}`}>
+    <header
+      className={`header ${theme === "light" ? "light-theme" : "dark-theme"}`}
+    >
       <div className="header-content">
         <div className="logo-container">
           <Link to="/" className="logo">
@@ -34,9 +37,16 @@ function Header() {
         </nav> */}
         <div className="actions">
           <button onClick={toggleTheme} className="theme-toggle-btn">
-            {theme === "light" ? <MdLightMode size={24} /> : <MdDarkMode size={24} />}
+            {theme === "light" ? (
+              <MdLightMode size={24} />
+            ) : (
+              <MdDarkMode size={24} />
+            )}
           </button>
-          <button onClick={handleChangeLanguage} className="language-toggle-btn">
+          <button
+            onClick={handleChangeLanguage}
+            className="language-toggle-btn"
+          >
             {currentLanguage.toUpperCase()}
           </button>
           {user ? (

@@ -55,6 +55,10 @@
     "testimonial1": "Great tool for collaborative programming! Makes remote teamwork easy.",
     "testimonial1Author": "John Smith, Developer",
     "testimonial2": "With this app, I can share my code in seconds. Very intuitive.",
-    "testimonial2Author": "Jane Doe, Frontend Developer"
+    "testimonial2Author": "Jane Doe, Frontend Developer",
+    "yourCodes": "Your documents",
+    "noPrivalages": "You don't have permission to modify.",
+    "docBelongTo": "Document belongs to: ",
+    "onlyReadForOthers": "Read-only for others"
   }
 }

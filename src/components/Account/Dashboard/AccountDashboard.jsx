@@ -96,7 +96,7 @@ const AccountDashboard = () => {
                 </div>
               </div>
             )}
-            <h2>Twoje kody:</h2>
+            <h2>{t("yourCodes")}:</h2>
             {user.codeSnippets.length > 0 ? (
               <ul className="code-list">
                 {user.codeSnippets.map((item) => (

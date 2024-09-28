@@ -28,10 +28,10 @@ const LandingPage = () => {
         theme === "light" ? styles.light_theme : styles.dark_theme,
       ].join(" ")}
     >
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h1>{t("welcomeTo")}</h1>
         <p>{t("yourJourney")}</p>
-      </header>
+      </div>
 
       <div className={styles.button_group}>
         <Link to={uniqueId} className={styles.landing_button}>

@@ -55,6 +55,10 @@
     "testimonial1": "Świetne narzędzie do wspólnego programowania! Ułatwia pracę w zespołach zdalnych.",
     "testimonial1Author": "Jan Kowalski, Programista",
     "testimonial2": "Dzięki tej aplikacji mogę udostępniać kod w kilka sekund. Bardzo intuicyjna.",
-    "testimonial2Author": "Anna Nowak, Frontend Developer"
+    "testimonial2Author": "Anna Nowak, Frontend Developer",
+    "yourCodes": "Twoje dokumenty",
+    "noPrivalages": "Nie masz uprawnień do modyfikacji.",
+    "docBelongTo": "Dokument należy do: ",
+    "onlyReadForOthers": "Tylko do odczytu dla innych"
   }
 }
